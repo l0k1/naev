@@ -102,9 +102,7 @@ function attacked() --several systems where the sirius have 'strategically place
    system.get("Pike"),
    system.get("Vanir"),
    system.get("Aesir"),
-   system.get("Herakin"),
    system.get("Eiderdown"),
-   system.get("Eye of Night"),
    system.get("Lapis"),
    system.get("Ruttwi"),
    system.get("Esker"),
@@ -115,7 +113,7 @@ function attacked() --several systems where the sirius have 'strategically place
          pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-300,300),rnd.rnd(-300,300)))
       end
    end
-   local chance_help,chance_civvie = rnd.rnd(1,3),rnd.rnd(1,3) --attack fleet and civvies are meant as a distraction to help the player.
+   local chance_help,chance_civvie = rnd.rnd(1,2),rnd.rnd(1,3) --attack fleet and civvies are meant as a distraction to help the player.
    if chance_help == 1 then
       pilot.add("Nasin Sml Attack Fleet",nil,last_sys_in)
    end
