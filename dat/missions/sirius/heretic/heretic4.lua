@@ -123,8 +123,10 @@ function jumper() --several systems where the sirius have 'strategically plced' 
       end
    end
    local chance_badguy = rnd.rnd(1,3)
-   for i = 1,chance_badguy do
-      pilot.add("Sirius Med Patrol",nil,vec2.new(rnd.rnd(-3000,3000),rnd.rnd(-3000,3000)))
+   if system.faction(system.cur()) == faction.get("Sirius") then
+      for i = 1,chance_badguy do
+         pilot.add("Sirius Med Patrol",nil,vec2.new(rnd.rnd(-3000,3000),rnd.rnd(-3000,3000)))
+      end
    end
    local chance_help,chance_civvie = rnd.rnd(1,2),rnd.rnd(1,3) --attack fleet and civvies are meant as a distraction to help the player.
    for i = 1,chance_help do
