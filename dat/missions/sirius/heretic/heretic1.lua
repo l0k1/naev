@@ -93,6 +93,7 @@ function landing()
       player.pay(reward)
       misn.cargoRm(message)
       misn_tracker = misn_tracker + 1
+      faction.modPlayer("Sirius",-15)
       faction.modPlayer("Nasin",3) --once again, the nasin like the fact that we are helping the nasin.
       var.push("heretic_misn_tracker",misn_tracker)
       misn.osdDestroy()

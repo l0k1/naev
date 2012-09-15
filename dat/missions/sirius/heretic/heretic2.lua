@@ -145,7 +145,7 @@ function land()
       player.pay(reward)
       misn_tracker = misn_tracker + 1
       faction.modPlayer("Nasin",4)
-      faction.modPlayer("Sirius",-5)
+      faction.modPlayer("Sirius",-15)
       misn.osdDestroy()
       var.push("heretic_misn_tracker",misn_tracker)
       misn.finish(true)
