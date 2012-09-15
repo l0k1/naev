@@ -76,27 +76,36 @@ function accept()
    player.takeoff()
    --get the hooks.
    hook.takeoff("takeoff")
-   hook.jumpin("attacked")
+   hook.jumpin("jumper")
    hook.jumpout("lastsys")
    hook.land("misn_over")
 end
 
 function takeoff()
-   pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-450,450),rnd.rnd(-450,450))) --left over fleets from the prior mission.
-   pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-450,450),rnd.rnd(-450,450)))
-   pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-450,450),rnd.rnd(-450,450)))
-   pilot.add("Nasin Sml Civilian",nil,homeasset) --other escapees.
-   pilot.add("Nasin Sml Civilian",nil,homeasset)
-   pilot.add("Nasin Sml Civilian",nil,homeasset)
-   pilot.add("Nasin Sml Attack Fleet",nil,homeasset) --these are trying to help.
-   pilot.add("Nasin Sml Attack Fleet",nil,homeasset)
+   if takeoff_check == nil then
+      takeoff_check = 1
+      pilot.clear()
+      pilot.toggleSpawn("Sirius",false)
+      pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-4500,4500),rnd.rnd(-4500,4500))) --left over fleets from the prior mission.
+      pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-4500,4500),rnd.rnd(-4500,4500)))
+      pilot.add("Nasin Sml Civilian",nil,homeasset) --other escapees.
+      pilot.add("Nasin Sml Civilian",nil,homeasset)
+      pilot.add("Nasin Sml Civilian",nil,homeasset)
+      pilot.add("Nasin Sml Civilian",nil,homeasset)
+      pilot.add("Nasin Sml Civilian",nil,homeasset)
+      pilot.add("Nasin Sml Attack Fleet",nil,homeasset) --these are trying to help.
+      pilot.add("Nasin Sml Attack Fleet",nil,homeasset)
+      pilot.add("Nasin Sml Attack Fleet",nil,homeasset)
+   end
 end
 
 function lastsys()
    last_sys_in = system.cur()
 end
 
-function attacked() --several systems where the sirius have 'strategically placed' an assault fleet to try and kill some nasin.
+function jumper() --several systems where the sirius have 'strategically plced' an assault fleet to try and kill some nasin.
+   pilot.clear()
+   pilot.toggleSpawn("Sirius",false)
    dangersystems = {
    system.get("Neon"),
    system.get("Pike"),
@@ -110,11 +119,15 @@ function attacked() --several systems where the sirius have 'strategically place
    }
    for i,sys in ipairs(dangersystems) do
       if system.cur() == sys then
-         pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-300,300),rnd.rnd(-300,300)))
+         pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-3000,3000),rnd.rnd(-3000,3000)))
       end
    end
+   local chance_badguy = rnd.rnd(1,3)
+   for i = 1,chance_badguy do
+      pilot.add("Sirius Med Patrol",nil,vec2.new(rnd.rnd(-3000,3000),rnd.rnd(-3000,3000)))
+   end
    local chance_help,chance_civvie = rnd.rnd(1,2),rnd.rnd(1,3) --attack fleet and civvies are meant as a distraction to help the player.
-   if chance_help == 1 then
+   for i = 1,chance_help do
       pilot.add("Nasin Sml Attack Fleet",nil,last_sys_in)
    end
    for i = 1,chance_civvie do

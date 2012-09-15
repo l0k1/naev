@@ -773,6 +773,18 @@
    <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
   </pilots>
  </fleet>
+ <fleet name="Sirius Med Patrol">
+  <ai>sirius</ai>
+  <faction>Sirius</faction>
+  <pilots>
+   <pilot name="Sirius Preacher" ship="Sirius Preacher"></pilot>
+   <pilot name="Sirius Preacher" ship="Sirius Preacher"></pilot>
+   <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
+   <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
+   <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
+   <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
+  </pilots>
+ </fleet>
  <fleet name="Sirius Assault Force">
   <ai>sirius</ai>
   <faction>Sirius</faction>
