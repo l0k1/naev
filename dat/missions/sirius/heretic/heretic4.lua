@@ -52,7 +52,6 @@ function create()
    misn.setReward = reward
    --format your strings, yo!
    bmsg[1] = bmsg[1]:format(targetasset:name(),targetsys:name())
-   emsg[1] = emsg[1]:format(targetasset:name())
    osd[1] = osd[1]:format(targetasset:name(),targetsys:name())
    abort_msg = abort_msg:format(people_carried)
    misn_desc = misn_desc:format(targetasset:name(),targetsys:name())
@@ -144,10 +143,15 @@ function jumper() --several systems where the sirius have 'strategically plced' 
 	 pilot.add("Nasin Sml Civilian",nil,last_sys_in)
       end
    end
+   
+   if system.faction(system.cur()) ~= faction.get("Sirius") and system.cur() ~= system.get("Tartan") then
+      player.allowSave(true)
+   end
 end
 
 function misn_over() --arent you glad thats over?
    if planet.cur() == planet.get("Ulios") then
+      emsg[1] = emsg[1]:format(targetasset:name())
       tk.msg(misn_title,emsg[1]) --introing one of the characters in the next chapter.
       tk.msg(misn_title,emsg[2])
       player.pay(reward)
