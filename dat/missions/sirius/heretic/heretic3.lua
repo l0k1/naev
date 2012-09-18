@@ -10,23 +10,24 @@ include "numstring.lua"
 lang = naev.lang()
 --beginning messages and choices
 bmsg = {}
-bmsg[1] = [[Draga is sitting at a table with a couple other people who appear to be official military types. They look at you as you approach. Draga stands and greets you.
+bmsg[1] = [[Draga is sitting at a table with a couple other people who appear to be official military types. One of them is smoking a massive cigar, which just looks both excessive and slightly illegal. They exude power, and you are sure they could easily hold their own in any situation. They stare you down as you approach. Draga stands and greets you, diffusing their hostile stares at his recognition.
    "Hello, %s. We have a situation, and we need your help."]]
 bmsg[2] = [[Draga sits back down with the other officials.
-   "Sirius is officially considering us a threat. As such, we need you to help us defend our system. Our goal here isn't to completely wipe out the Sirius threat, but rather just to drive them off and show them that we mean business. We want them to feel it."]]
+   "Sirius is officially considering us a threat. As such, we need you to help us defend our system. As far as we know, they are taking this seriously and jumping in several battle fleets. This is going to get thick quick. We don't have much of a combat force here, so we are looking for anyone crazy enough to help us. We have a small combat ready fleet ready to launch. Our goal here isn't to completely wipe out the Sirius threat, but rather just to drive them off and show them that we mean business. We want them to feel it."]]
 bmsg[3] = [[Draga leans back and smiles ruefully. 
    "So, you will be outnumbered, outgunned, and officially declared an enemy of the state. Want in? Please note, however, that if you abort the mission, or jump out-system, you will be dismissed. Permanently."]]
 --messages for the choice
 bmsgc = {}
 bmsgc[1] = [[He snorts derisively at your question.
-   "Why, I mean you will no longer be welcome amongst the Nasin. At least, as a pilot."]]
+   "Why, I mean you will no longer be welcome amongst the Nasin. At least, as a pilot. I'm not a religious leader, so I can't speak to you joining a congregation somewhere. But I can't imagine they'd like you."]]
 bmsgc[2] = [[Sorrow fills Draga's eyes at the question.
-   "Unfortunately, House Sirius and those claiming to represent Sirichana feel that we are a band of heretics out to destroy the Sirius way of life. We aren't out to destroy it, but rather to bring it to completion. They have decided that we need to be eliminated."]]
+   "Unfortunately, House Sirius and those claiming to represent Sirichana feel that we are a band of heretics out to destroy the Sirius way of life. We aren't out to destroy it, but rather to bring it to completion. They have decided that we need to be eliminated, and are going to do everything in their power to get rid of us. They are treating us as an enemy state, and as such, we are all enemy combatants. That means no trial, no jury, and most importantly, no pardon."]]
 bmsgc[3] = [[Draga eyes you. You can tell he doesn't like the question.
-   "You really like the money, %s? You know, I'd much prefer it if you were just loyal enough to not worry about the money. We will always pay you well. We take care of our own. We can pay you %s. I hope its good enough"]]
-bmsgc[4] = [[Draga is quite excited at the news, and the surrounding officers mumble their approval. "Great! You should hurry up and take off, we are expecting them any second now. We already have one defensive element in space."]]
-bmsgc[5] = [[Obviously annoyed beyod belief, Draga doesn't say a word. He makes a shooing guesture with his hand, and doesn't even look as you go.]]
-draga_chooser = [[Draga looks at you impatiently. "Any more questions or can we get going?"]]
+   "Do you really like the money, %s? You know, I'd much prefer it if you were just loyal enough to not worry about the money. We will always pay you well. We take care of our own. Greed is one of the major downfalls of modern society and you would do better to cleanse your personality of it. I do understand, however, that all men are... inspired... by different things. So, we can afford to pay you %s. You haven't proven to us that you are worth more. I hope its good enough for you to joing our endeavour." The two officers nod their approval of the amount, and of Draga's interpretation of your question, whether your motives really were greed or not.]]
+bmsgc[4] = [[Draga is quite excited at the news, and the surrounding officers look enthused, and offer up their approval. "Great! You should hurry up and take off, we are expecting them any second now. We already have a small defensive element in space."
+   One of the officials sitting there leans his head sideways. You notice a small earbud in his ear as he listens to whatever info is being piped in. The color draining from he face isn't a good sign. He clears his throat, and looks at Draga and you. "We just had a Sirius assault element jump in. We need all pilots to take off now." He looks at you. "Thank you for your help. Now, get going!" You run off hurriedly to prepare as quickly as you can.]]
+bmsgc[5] = [[Obviously annoyed beyod belief, Draga doesn't say a word. He makes a shooing guesture with his hand, and doesn't even look as you go. The officers with him shake their heads disapprovingly, and with a little bit of worry.]]
+draga_chooser = [[Draga looks at you with impatience coming from concern. "Any more questions or can we get going?"]]
 choice = {}
 choice[1] = "What do you mean, permanently?"  --this opens up dialog bmsg[4]
 choice[2] = "Why are they attacking?" --jumps to dialog bmsg[5]
