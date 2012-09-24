@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <unidiffs>
  <unidiff name="collective_dead">
   <system name="C-00">
@@ -63,6 +63,14 @@
   </system>
   <system name="Gamma Polaris">
    <jump target="Hakoi" type="exitonly">add</jump>
+  </system>
+ </unidiff>
+ <unidiff name="hereticdiff1">
+  <system name="Suna">
+   <jump target="Kiwi" x="750" y="5000" hide="0">add</jump>
+  </system>
+  <system name="Kiwi">
+   <jump target="Suna" type="exitonly">add</jump>
   </system>
  </unidiff>
 </unidiffs>
