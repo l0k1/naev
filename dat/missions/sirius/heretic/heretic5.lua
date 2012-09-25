@@ -19,10 +19,10 @@ bmsg[2] = [[Thomorr guestures for you to sit down. "When the Sirius launched the
 bmsg[3] = [[Mase Attes pulls out a binder, and opens it. "This is a rough idea of what we've had going on in our navy since the attack." He points out some figures and a couple graphs, and begins to explain. "The Nasin really had no true organized navy prior to the attack on The Wringer, as we had no reason. We had a roughly hewn, disorganized militia. After the attack, we decided we wanted revenge. We needed revenge. So our leadership decided that we needed a true navy, and began hiring pilots from amongst our ranks, as well as buying up any and all combat worthy vessels to equip those pilots with."]]
 bmsg[4] = [[Thomorr, at this point, coughs and interupts Attes' monologue. "Where you come in, %s, is that we need you. You are a decent pilot, and you already own a good vessel. Our navy... suffered... during the Sirius attack, and we are looking for a few good pilots to help our navy out. We can't guarantee you anything, but we can offer you prestige, honor, and a few credits. As well as a chance to take out some Sirius. We want you in the Nasin Navy. What do you say?]] --playername
 convo_choice = {
-   "I say yes!", --[[links to bmsg[5],[9]]]
-   "How much pay are we talking?", --[[links to bmsg[6]]]
-   "Give me some time to think about it.",--[[links to bmsg[7]]]
-   "I don't want any part in this heresy!"--[[links to bmsg[8]]]
+   "I say yes!", --[[links to bmsgand 9]]
+   "How much pay are we talking?", --[[links to bmsg[6]]
+   "Give me some time to think about it.",--[[links to bmsg[7]]
+   "I don't want any part in this heresy!"--[[links to bmsg[8]]
    }
 bmsg[5] = [[Attes smiles broadly. "Good. Good. Well, you will be working closely with me, as I will be your immediate commander. I'm glad to have you on board." He shakes your hand enthusiastically. "I have a current wing under me of about 6 ships. You will be flying with us. The fleet is about 18 ships."]]
 bmsg[6] = [[Thomorr shakes his head and gives Attes an "I told you he was about the money" look. He turns to you. "We will pay, and promote you, based on your loyalty to us and your performance. It will be on a per-mission basis. Base pay is 10,000 credits from here on forward. Of course, this is only the base pay. You'll be making much more. This mission, we will pay you %d."]] --reward
