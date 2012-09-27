@@ -45,6 +45,7 @@ function create()
    targetasset, targetsys = planet.get("Ulios") --this will be the new HQ for the nasin in the next part.
    free_cargo = pilot.cargoFree(pilot.player())
    people_carried =  (16 * free_cargo) + 7 --average weight per person is 62kg. one ton / 62 is 16. added the +7 for ships with 0 cargo.
+
    --set some mission stuff
    misn.setNPC(npc_name,"neutral/thief2")
    misn.setDesc(bar_desc)
@@ -52,9 +53,6 @@ function create()
    misn.setReward = reward
    --format your strings, yo!
    bmsg[1] = bmsg[1]:format(targetasset:name(),targetsys:name())
-   osd[1] = osd[1]:format(targetasset:name(),targetsys:name())
-   abort_msg = abort_msg:format(people_carried)
-   misn_desc = misn_desc:format(targetasset:name(),targetsys:name())
 end
 
 function accept()
@@ -63,7 +61,10 @@ function accept()
       misn.finish ()
    end
    misn.accept()
+
+   misn_desc = misn_desc:format(targetasset:name(),targetsys:name())
    misn.setDesc(misn_desc)
+   osd[1] = osd[1]:format(targetasset:name(),targetsys:name())
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
    jump.get(system.get("Suna"), system.get("Kiwi")):setKnown()
@@ -72,10 +73,12 @@ function accept()
    tk.msg(misn_title,bmsg[2])
    tk.msg(misn_title,bmsg[3])
    --convo over. time to finish setting the mission stuff.
+
    misn.markerAdd(targetsys,"plot")
    refugees = misn.cargoAdd("Refugees",free_cargo)
    player.takeoff()
    --get the hooks.
+
    hook.takeoff("takeoff")
    hook.jumpin("jumper")
    hook.jumpout("lastsys")
@@ -87,6 +90,7 @@ function takeoff()
       takeoff_check = 1
       pilot.clear()
       pilot.toggleSpawn("Sirius",false)
+
       pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-4500,4500),rnd.rnd(-4500,4500))) --left over fleets from the prior mission.
       pilot.add("Sirius Assault Force",sirius,vec2.new(rnd.rnd(-4500,4500),rnd.rnd(-4500,4500)))
       pilot.add("Nasin Sml Civilian",nil,homeasset) --other escapees.
@@ -112,6 +116,7 @@ end
 function jumper() --several systems where the sirius have 'strategically plced' an assault fleet to try and kill some nasin.
    pilot.clear()
    pilot.toggleSpawn("Sirius",false)
+
    dangersystems = {
    system.get("Neon"),
    system.get("Pike"),
@@ -156,6 +161,7 @@ function misn_over() --arent you glad thats over?
       emsg[1] = emsg[1]:format(targetasset:name())
       tk.msg(misn_title,emsg[1]) --introing one of the characters in the next chapter.
       tk.msg(misn_title,emsg[2])
+
       player.pay(reward)
       player.addOutfit("Hidden Jump Scanner")
       misn.cargoRm(refugees)
@@ -164,14 +170,16 @@ function misn_over() --arent you glad thats over?
       faction.modPlayer("Sirius",-5) --the sirius shouldn't like you. at all.
       var.push("heretic_misn_tracker",misn_tracker)
       misn.osdDestroy()
+
       player.allowSave(true)
       misn.finish(true)
    end
 end
 
 function abort()
+   abort_msg = abort_msg:format(people_carried)
    tk.msg(misn_title,abort_msg)
-   --var.push("heretic_misn_tracker",-1) --if the player jettisons the peeps, the nasin will not let the player join their ranks anymore.
+   --var.push("heretic_misn_tracker",-1) --if the player jettisons the peeps, the nasin will not let the player fly with them anymore.
    misn.osdDestroy()
    player.allowSave(true)
    misn.finish(true)

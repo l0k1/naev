@@ -59,9 +59,6 @@ function create()
    bmsg[1] = bmsg[1]:format(targetasset:name(),targetasset:name(),targetsystem:name(),targetasset:name(),numstring(reward))
    bmsg[2] = bmsg[2]:format(targetasset:name())
    bmsg[3] = bmsg[3]:format(targetasset:name())
-   emsg[1] = emsg[1]:format(targetasset:name())
-   osd[1] = osd[1]:format(targetasset:name(),targetsystem:name())
-   misn_desc = misn_desc:format(targetasset:name(),targetsystem:name())
 end
 
 function accept()
@@ -72,9 +69,11 @@ function accept()
       misn.finish(false)
    end
    tk.msg(misn_title,bmsg[3])
+   misn_desc = misn_desc:format(targetasset:name(),targetsystem:name())
    misn.setDesc(misn_desc)
    misn.accept()
    misn.markerAdd(targetsystem,"plot")
+   osd[1] = osd[1]:format(targetasset:name(),targetsystem:name())
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
    freecargo = pilot.cargoFree(pilot.player()) --checks to make sure the player has 5 tons available
@@ -88,6 +87,7 @@ end
 
 function land ()
    if planet.cur() == targetasset then
+      emsg[1] = emsg[1]:format(targetasset:name())
       tk.msg(misn_title,emsg[1])
       tk.msg(misn_title,emsg[2])
       player.pay(reward)

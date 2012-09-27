@@ -46,9 +46,11 @@ function create()
    --this mission does make one system claim, in suna.
 	--initialize the variables
    homeasset, homesys = planet.cur()
+
    if not misn.claim(homesys) then
       misn.finish(false)
    end
+
    nasin_rep = faction.playerStanding("Nasin")
    misn_tracker = var.peek("heretic_misn_tracker")
    playername = player.name()
@@ -58,17 +60,16 @@ function create()
    takeoff_counter = 0
    draga_convo = 0
    deathcount = 0
+
    --set the mission stuff
    misn.setTitle(misn_title)
    misn.setReward(numstring(reward) .. "credits")
    misn.setNPC(npc_name,"neutral/thief2")
    misn.setDesc(bar_desc)
+
    --format the messages
    bmsg[1] = bmsg[1]:format(playername)
    chooser[2] = chooser[2]:format(homeasset:name(),numstring(reward))
-   osd[2] = osd[2]:format(homeasset:name())
-   out_sys_failure_msg = out_sys_failure_msg:format(playername)
-   misn_desc = misn_desc:format(homesys:name())
 end
 
 function accept()
@@ -90,11 +91,15 @@ function accept()
       break
       end
    end
+
+   misn_desc = misn_desc:format(homesys:name())
    misn.setDesc(misn_desc)
    misn.accept()
    misn.markerAdd(homesys,"plot")
+   osd[2] = osd[2]:format(homeasset:name())
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
+
    hook.takeoff("takeoff")
    hook.jumpin("out_sys_failure")
    hook.land("land")
@@ -103,6 +108,7 @@ end
 function takeoff()
    pilot.clear()
    pilot.toggleSpawn("Sirius",false) --the only sirius i want in the system currently is the recon force
+
    recon = pilot.add("Sirius Recon Force",nil,system.get("Herakin"))
    attackers = pilot.add("Nasin Sml Attack Fleet",nil,homeasset) --a little assistance
    n_recon = #recon --using a deathcounter to track success
@@ -137,6 +143,7 @@ function land()
       tk.msg(misn_title,chronic_failure) --landing pre-emptively is a bad thing.
       misn.osdDestroy()
       misn.finish(false) 
+
    elseif planet.cur() == homeasset and finished == 1 then
       tk.msg(misn_title,emsg_1)
       player.pay(reward)
@@ -151,6 +158,7 @@ end
 
 function out_sys_failure() --jumping pre-emptively is a bad thing.
    if system.cur() ~= homesys then
+      out_sys_failure_msg = out_sys_failure_msg:format(playername)
       tk.msg(misn_title,out_sys_failure_msg)
       misn.osdDestroy()
       misn.finish(false)

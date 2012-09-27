@@ -69,6 +69,7 @@ function create()
    planding = 0
    homeasset, homesys = planet.cur()
    msg_checker = 0
+
    --set the mission stuff
    if not misn.claim(homesys) then
       tk.msg("debug","system not claimed! mission aborting.")
@@ -78,15 +79,10 @@ function create()
    misn.setTitle( misn_title )
    misn.setNPC(npc_name,"neutral/thief2")
    misn.setDesc(bar_desc)
+
    --format your strings, yo!   
    bmsg[1] = bmsg[1]:format(player.name())
    bmsgc[3] = bmsgc[3]:format(player.name(),numstring(reward))
-   emsg[1] = emsg[1]:format(player.name())
-   return_to_base_msg = return_to_base_msg:format(player.name(),homeasset:name())
-   osd[1] = osd[1]:format(homeasset:name())
-   osd[2] = osd[2]:format(homeasset:name())
-   misn_desc = misn_desc:format(homesys:name())
-   time_to_come_home = time_to_come_home:format(player.name())
 end
 
 function accept()
@@ -115,9 +111,12 @@ function accept()
       checker = "you been through one time, yo!" --makes sure the intro message to the convos only comes in once
    end
 
+   misn_desc = misn_desc:format(homesys:name())
    misn.setDesc(misn_desc) --convo is over! time to set the last of the mission stuff
    misn.accept()
    misn.markerAdd(homesys,"plot")
+   osd[1] = osd[1]:format(homeasset:name())
+   osd[2] = osd[2]:format(homeasset:name())
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
 
@@ -130,6 +129,7 @@ end
 function takeoff() --for when the player takes off from the wringer.
    pilot.clear() --clearing out all the pilots, and
    pilot.toggleSpawn("Sirius",false) --making the sirius not spawn. I want the assault fleet the only sirius in there.
+
    deathcounter = 0 -- Counts destroyed Nasin ships.
    sirius_be_serious = pilot.add("Sirius Assault Force",sirius,system.get("Herakin"))
    
@@ -169,10 +169,13 @@ function death(p)
 end
 
 function flee()
+   return_to_base_msg = return_to_base_msg:format(player.name(),homeasset:name())
    tk.msg(misn_title,return_to_base_msg)
    returnchecker = true --used to show that deathcounter has been reached, and that the player is landing 'just because'
    misn.osdActive(2)
+   time_to_come_home = time_to_come_home:format(player.name())
    tk.msg(misn_title,time_to_come_home)
+
    -- Send any surviving Nasin ships home.
    for _, j in ipairs(de_fence) do
       if j:exists() then
@@ -181,6 +184,7 @@ function flee()
          j:hookClear() -- So we don't trigger death() again.
       end
    end
+
    for _, j in ipairs(de_fence_2) do
       if j:exists() then
          j:control()
@@ -214,6 +218,7 @@ function return_to_base()
       misn.finish(false) --mwahahahahaha!
    else
       player.pay(reward)
+      emsg[1] = emsg[1]:format(player.name())
       tk.msg(misn_title,emsg[1])
       misn_tracker = misn_tracker + 1
       faction.modPlayer("Nasin",4)
