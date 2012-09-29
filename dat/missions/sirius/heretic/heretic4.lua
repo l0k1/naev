@@ -29,7 +29,7 @@ osd = {}
 osd[1] = "Fly the refugees to %s in the %s system."
 
 --random odds and ends
-abort_msg = [[You decide that this mission is just too much. You open up the cargo doors and jettison the %d people out into the cold emptiness of space. The Nasin, and the Sirius, will hate you forever, but you did what you had to do.]]
+abort_msg_space = [[You decide that this mission is just too much. You open up the cargo doors and jettison the %d people out to fend for themself. The Nasin, and the Sirius, will hate you forever, but you did what you had to do.]]
 misn_title = "The Egress"
 npc_name = "Draga"
 bar_desc = "Draga is running around, helping the few Nasin in the bar to get stuff together and get out."
@@ -67,8 +67,8 @@ function accept()
    osd[1] = osd[1]:format(targetasset:name(),targetsys:name())
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
+   diff.apply("hereticdiff1")
    jump.get(system.get("Suna"), system.get("Kiwi")):setKnown()
-   unidiff.apply("hereticdiff1")
    player.allowSave(false) -- so the player won't get stuck with a mission he can't complete.
    tk.msg(misn_title,bmsg[2])
    tk.msg(misn_title,bmsg[3])
@@ -177,10 +177,10 @@ function misn_over() --arent you glad thats over?
 end
 
 function abort()
-   abort_msg = abort_msg:format(people_carried)
+   abort_msg_space = abort_msg_space:format(people_carried)
    tk.msg(misn_title,abort_msg)
    --var.push("heretic_misn_tracker",-1) --if the player jettisons the peeps, the nasin will not let the player fly with them anymore.
    misn.osdDestroy()
    player.allowSave(true)
-   misn.finish(true)
+   misn.finish(false)
 end
