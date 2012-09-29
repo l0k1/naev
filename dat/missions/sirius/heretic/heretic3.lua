@@ -48,12 +48,9 @@ osd[2] = "Return to %s."
 misn_title = "The Assault"
 npc_name = "Draga"
 bar_desc = "The familiar form of Draga is at a table with some officers. They look busy."
-return_to_base_msg = [[A clear voice booms in your ship through the comm system.
-   "%s! We need you to return to %s immediately! We are being overwhelmed and are evacuating! Please hurry!" The voice cuts out in a tumult of static.]]
 p_landing = [[Draga appears with three armed Nasin carrying some serious weaponry. 
    He points at you and says "I have been more than accomadating with you. Now, you are dismissed. Take care of your business, and leave. And if you don't, my friends here are more than willing to collect that bounty."
    Draga strides away, exuding annoyance and rage.]] 
-oos = [[A voice comes into your comm system. "We need you back in the system now! Hurry!"]]
 oos_failure = [[A scratchy voice from what sounds like very far away cut in on your comms priority channel. 
    "We needed you! We are being overrun by Sirius and we aren't gonna make it. Don't bother coming back to us. Ever." 
    The voice cuts out, and you feel like you've made a horrible mistake.]]
@@ -169,8 +166,6 @@ function death(p)
 end
 
 function flee()
-   return_to_base_msg = return_to_base_msg:format(player.name(),homeasset:name())
-   tk.msg(misn_title,return_to_base_msg)
    returnchecker = true --used to show that deathcounter has been reached, and that the player is landing 'just because'
    misn.osdActive(2)
    time_to_come_home = time_to_come_home:format(player.name())
