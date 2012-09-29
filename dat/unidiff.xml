@@ -67,7 +67,7 @@
  </unidiff>
  <unidiff name="hereticdiff1">
   <system name="Suna">
-   <jump target="Kiwi" x="750" y="5000" hide="0">add</jump>
+   <jump target="Kiwi" x="450" y="7500" type="hidden" hide="1">add</jump>
   </system>
   <system name="Kiwi">
    <jump target="Suna" type="exitonly">add</jump>

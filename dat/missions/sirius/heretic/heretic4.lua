@@ -43,8 +43,7 @@ function create()
    reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
    homeasset = planet.cur()
    targetasset, targetsys = planet.get("Ulios") --this will be the new HQ for the nasin in the next part.
-   free_cargo = pilot.cargoFree(pilot.player())
-   people_carried =  (16 * free_cargo) + 7 --average weight per person is 62kg. one ton / 62 is 16. added the +7 for ships with 0 cargo.
+
 
    --set some mission stuff
    misn.setNPC(npc_name,"neutral/thief2")
@@ -75,6 +74,7 @@ function accept()
    --convo over. time to finish setting the mission stuff.
 
    misn.markerAdd(targetsys,"plot")
+   free_cargo = pilot.cargoFree(pilot.player())
    refugees = misn.cargoAdd("Refugees",free_cargo)
    player.takeoff()
    --get the hooks.
@@ -177,10 +177,12 @@ function misn_over() --arent you glad thats over?
 end
 
 function abort()
+   free_cargo = pilot.cargoFree(pilot.player())
+   people_carried =  (16 * free_cargo) + 7 --average weight per person is 62kg. one ton / 62 is 16. added the +7 for ships with 0 cargo.
    abort_msg_space = abort_msg_space:format(people_carried)
    tk.msg(misn_title,abort_msg)
-   --var.push("heretic_misn_tracker",-1) --if the player jettisons the peeps, the nasin will not let the player fly with them anymore.
+   var.push("heretic_misn_tracker",-1) --if the player jettisons the peeps, the nasin will not let the player fly with them anymore.
    misn.osdDestroy()
    player.allowSave(true)
-   misn.finish(false)
+   misn.finish(true)
 end
