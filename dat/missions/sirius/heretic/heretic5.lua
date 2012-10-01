@@ -35,6 +35,7 @@ emsg[2] = [[As though thinking of some grand, new idea, he looks to you with a g
 emsg[3] = [[You and Attes reach the back of the hanger, and turn around. You and him survey the myriad of ships in the hanger, both taking off and landing. "You did good out there, %s. I'm glad to have you on board. You should know, your in now. We appreciate your dedication and loyalty." He coughs. "We are planning another assault. Come and meet me in the bar when your ready to take down another Sirius asset. Payment for this mission has already been credited to your account." With this, he shakes your hand gratefully and strides out, leaving you alone at the back of the hanger.]] --playername
 npc_name = "Thomorr and Attes"
 bar_desc = "You see two men, chatting at one of the tables against the wall."
+misn_desc = "Fly to %s and help assault %s."
 counter_msg = [[Heads up! A Sirius counter-attack fleet just jumped in!]]
 shuttles_are_in = [[Get ready! Our marine shuttles have just jumped in! Protect them!]]
 time_to_return = [[Your comm squaks, a little bit of post-jammer feedback giving you a start. The fleet commanders voice drifts into the static, addressing what remains of the fleet. "Good job boys! The Sirius are all dead, and you guys are cleared to come on home. Drinks are on me!"]]
@@ -46,8 +47,10 @@ osd = {}
 osd[1] = [[Fly to %s and meetup with the main fleet.]]
 osd[2] = [[Fly to %s to help attack %s.]]
 osd[3] = [[Protect the Marine shuttles, while destroying the opposing fleet.]]
-osd[4] = [[Rendevoux with the main fleet on %s in %s]]
-
+osd[4] = [[Rendevoux with the main fleet on %s in %s.]]
+brief = {}
+brief[1] = "IM YELLING!"
+brief[2] = "WHO WAS LANCELOT?"
 
 function create()
 
@@ -97,6 +100,8 @@ function accept()
         end
     end
     misn.accept()
+    misn_desc = misn_desc:format(targetsys,targetasset)
+    misn.setDesc(misn_desc)
     tk.msg(misn_title,bmsg[9])
     osd[1] = osd[1]:format(meetsys:name())
     osd[2] = osd[2]:format(targetasset:name(),targetsys:name())
@@ -109,15 +114,17 @@ end
 
 function jumper()
    if system.cur() == meetsys then
+      pilot.clear()
       pilot.toggleSpawn("Sirius",false)
       good_fleet = pilot.add("Nasin Assault Fleet",nil,vec2.new(-500,10000))
       pilot.add("Nasin Marine Shuttles",nil,vec2.new(-1000,11000))
-      for i,pilot in ipairs(good_fleet) do
-         pilot:control()
-         pilot:brake()
-         pilot:setFriendly()
+      for i,p in ipairs(good_fleet) do
+         p:control()
+         p:brake()
+         p:setFriendly()
+         p:setVisplayer(true)
       end
-      hook.timer(400,"proximity",{location=vec2.new(-500,10000),radius=300,funcname="space_meeting"})
+      hook.date(time.create(0,0,100),"proximity",{location=vec2.new(-500,10000),radius=300,funcname="space_meeting"})
    end
    if system.cur() == targetsys then
       mission_status = 1
@@ -146,26 +153,27 @@ function jumper()
 end
 
 function space_meeting() --for meeting the friendly fleet in the meetup system
-   current_time = time.get()
-   while true do
-      if time.get() == current_time+time.create(0,0,5) then
-         good_fleet[1]:broadcast(brief[1],false)
-      elseif time.get() == current_time+time.create(0,0,10) then
-         good_fleet[1]:broadcast(brief[2],false)
-      elseif time.get() == current_time+time.create(0,0,15) then
-         good_fleet[1]:broadcast(brief[3],false)
-      elseif time.get() == current_time+time.create(0,0,20) then
-         good_fleet[1]:broadcast(brief[4],false)
-      elseif time.get() == current_time+time.create(0,0,21) then
-         misn.osdActive(2)
-         for i,pilot in ipairs(good_fleet) do
-            if i == 1 then
-               pilot:hyperspace(targetsys)
-            else
-               pilot:follow(good_fleet[i-1])
-            end
+   if current_time == nil then
+      current_time = time.get()
+      tk.msg("current_time set",current_time:str())
+   end
+   tk.msg("was a infinite loop!" , "the space meeting function got triggered!") --helping me debug
+   if time.get() >= current_time+time.create(0,0,147) and time.get() <= current_time + time.create(0,0,250) then --THIS. THIS WORKS.
+      good_fleet[1]:broadcast(brief[1],false)
+   elseif time.get() == current_time+time.create(0,0,400) then
+      good_fleet[1]:broadcast(brief[2],false)
+   elseif time.get() == current_time+time.create(0,0,800) then
+      good_fleet[1]:broadcast(brief[3],false)
+   elseif time.get() == current_time+time.create(0,0,1200) then
+      good_fleet[1]:broadcast(brief[4],false)
+   elseif time.get() == current_time+time.create(0,0,1600) then
+      misn.osdActive(2)
+      for i,pilot in ipairs(good_fleet) do
+         if i == 1 then
+            pilot:hyperspace(targetsys)
+         else
+            pilot:follow(good_fleet[i-1])
          end
-         break
       end
    end
    misn.markerMove(meetthemark,targetsys)
