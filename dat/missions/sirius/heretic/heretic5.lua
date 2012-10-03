@@ -26,8 +26,8 @@ convo_choice[4] = "I don't want any part in this heresy!"
 bmsg[5] = [[Attes smiles broadly. "Good. Good. Well, you will be working closely with me, as I will be your immediate commander. I'm glad to have you on board." He shakes your hand enthusiastically. "I have a current wing under me of about 6 ships. You will be flying with us. The fleet is about 18 ships."]]
 bmsg[6] = [[Thomorr shakes his head and gives Attes an "I told you he was about the money" look. He turns to you. "We will pay, and promote you, based on your loyalty to us and your performance. It will be on a per-mission basis. Base pay is 10,000 credits from here on forward. Of course, this is only the base pay. You'll be making much more. This mission, we will pay you %d."]] --reward
 bmsg[7] = [[Thomorr and Attes both rise and shake your hand. Thomorr speaks, "Please, take your time. We will be hanging around here if you wish to come back."]]
-bmsg[8] = [[Thomorr rises and anger, and Attes reaches over the table and lands a right hook on your jaw. You topple over backwards, and by the time you rise up, they've already stormed off. Your glad to be done with this.]]
-bmsg[9] = [[Attes seems quite happy at the moment, and he continues. "Well, we do have a current mission to go on. The Nasin are beginning our retaliation on House Sirius, and we are issuing a coordinated attack on about 10 outlying military installations. More guerilla warfare, mind you. We want to cause chaos. You will be meeting up with the fleet in %s, and attacking %s in %s. You were the last piece of the puzzle. Now, get going!"]] --meetsys, target asset, target system
+bmsg[8] = [[Thomorr rises in anger, and Attes reaches over the table and lands a right hook on your jaw. You topple over backwards, and by the time you rise up, they've already stormed off. Your glad to be done with this.]]
+bmsg[9] = [[Attes seems quite happy at the moment, and he continues. "Well, we have an important mission to go on. We are beginning our retaliation on House Sirius, and we are issuing a coordinated attack on about 10 outlying military installations. More guerilla warfare, mind you. We want to cause chaos. You will be meeting up with the fleet in %s, and attacking %s in %s. After you jump in, several shuttles will jump in and attempt to take that asset. We need to protect them and wipe out any Sirius. You were the last piece of the puzzle. Now, get going!"]] --meetsys, target asset, target system
 emsg = {}
 emsg[1] = [[You land on %s, grateful to have made it out of the mission alive. These Nasin were getting serious, and the Sirius are getting angry. You land in the hanger and step out of your ship, to be greeted by Mase Attes. He was grinning ear to ear, obviously quite happy at the success of the assault. He claps you on the shoulder, and the two of you begin walking towards the rear of the hanger together. He begins to speak.
 "I'm glad you made it out of there. I would hate to have your first mission for me end in your ship getting blown up! It would've looked back for the fleet. That stuff should only happen with those crazy special forces guys." He shakes his head.]] --homeasset
@@ -39,7 +39,7 @@ misn_desc = "Fly to %s and help assault %s."
 counter_msg = [[Heads up! A Sirius counter-attack fleet just jumped in!]]
 shuttles_are_in = [[Get ready! Our marine shuttles have just jumped in! Protect them!]]
 time_to_return = [[Your comm squaks, a little bit of post-jammer feedback giving you a start. The fleet commanders voice drifts into the static, addressing what remains of the fleet. "Good job boys! The Sirius are all dead, and you guys are cleared to come on home. Drinks are on me!"]]
-shuttles_all_dead = [[You see a flash as the last shuttle explodes. You comm squeals to life, and the voice of Attes blares to life. "Alright guys, you gave it a good run. The shuttles are all gone so this mission is a failure. Get back to base if you can, we are sounding the retreat." The static cuts out.]]
+shuttles_all_dead = [[You see a flash as the last shuttle explodes. You comm squeals, and the voice of Attes blares to life. "Alright guys, you let all the shuttles explode, so this mission is a failure. Get back to base if you can, we are sounding the retreat." The static cuts out, and you consider this mission an utter failure.]]
 shuttles_have_docked = [[The comm station blinks to life, and you see one of the commanders of the marine shuttles. He is broadcasting to all the Nasin ships in the area. "We have all the shuttles landed, and are currently taking command of the station. Resistance is light, we dont expect to much trouble. Thanks for the cover!" The comm channel closes, leaving the ship in silence again.]]
 premature_jump = [[You flash out of hyperspace, and almost immediately your comm stations priority channel comes to life. You hear the angry voice of Attes. "You jumped out of the system too early! Thanks for nothing. Get lost kid!"]]
 premature_land = [[As soon as you enter the atmosphere, your priority communication channel bleeps, and Attes fills the cabin with his sonorous voice. "We requested that you not land until the mission is complete. The shuttles and your fleet-mates are at risk because of you! Dont bother coming back to help us."]]
@@ -48,9 +48,12 @@ osd[1] = [[Fly to %s and meetup with the main fleet.]]
 osd[2] = [[Fly to %s to help attack %s.]]
 osd[3] = [[Protect the Marine shuttles, while destroying the opposing fleet.]]
 osd[4] = [[Rendevoux with the main fleet on %s in %s.]]
-brief = {}
-brief[1] = "IM YELLING!"
-brief[2] = "WHO WAS LANCELOT?"
+brief = {} --Used in the meetsys at the... well... meeting.
+brief[1] = "Alright fellas, this is going to get hot quick. We all know our jobs."
+brief[2] = "After we've engaged, the shuttles and a couple reinforcements will jump in."
+brief[3] = "I can't stress enough, protect them. Also, be expecting a quick reaction force from the Sirius."
+brief[4] = "We have to take this station! We have to kill them all! Remember Suna! Remember the slain!"
+brief[5] = "For Sirichana! Lets ride!"
 
 function create()
 
@@ -62,6 +65,7 @@ function create()
    homesystem = system.cur()
    meetsys = system.get("Nougat")
    targetasset,targetsys = planet.get("Fyruse Station")
+   endasset,endsys = planet.get("Atalanta")
    jumpchecker = 0
    deathcounter = 0
    shuttles_killed = 0
@@ -100,12 +104,12 @@ function accept()
         end
     end
     misn.accept()
-    misn_desc = misn_desc:format(targetsys,targetasset)
+    misn_desc = misn_desc:format(targetsys:name(),targetasset:name())
     misn.setDesc(misn_desc)
     tk.msg(misn_title,bmsg[9])
     osd[1] = osd[1]:format(meetsys:name())
     osd[2] = osd[2]:format(targetasset:name(),targetsys:name())
-    osd[4] = osd[4]:format(homeasset:name(),homesystem:name())
+    osd[4] = osd[4]:format(endasset:name(),endsys:name())
     misn.osdCreate(misn_title,osd)
     misn.osdActive(1)
     meetthemark = misn.markerAdd(meetsys,"plot")
@@ -116,33 +120,50 @@ function jumper()
    if system.cur() == meetsys then
       pilot.clear()
       pilot.toggleSpawn("Sirius",false)
+      pilot.toggleSpawn("Pirate",false)
       good_fleet = pilot.add("Nasin Assault Fleet",nil,vec2.new(-500,10000))
-      pilot.add("Nasin Marine Shuttles",nil,vec2.new(-1000,11000))
+      shuts = pilot.add("Nasin Marine Shuttles",nil,vec2.new(-1000,11000))
+      awes = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(-1100,11100))
+      for i,p in ipairs(awes) do
+         table.insert(shuts,p)
+      end
+      for i,p in ipairs(shuts) do
+         p:control()
+         p:brake()
+         p:setFriendly()
+         p:setVisplayer(true)
+      end
       for i,p in ipairs(good_fleet) do
          p:control()
          p:brake()
          p:setFriendly()
          p:setVisplayer(true)
       end
-      hook.date(time.create(0,0,100),"proximity",{location=vec2.new(-500,10000),radius=300,funcname="space_meeting"})
+      hook.date(time.create(0,0,100),"proximity",{location=vec2.new(-500,10000),radius=700,funcname="space_meeting"})
+      hook.pilot(nil,"jump","time_for_jump") --for jumping ships
    end
    if system.cur() == targetsys then
       mission_status = 1
       pilot.clear()
       pilot.toggleSpawn("Sirius",false)
+      pilot.toggleSpawn("Pirate",false)
       enemy = pilot.add("Sirius Defense Fleet",nil,targetasset)
       num_enemy = #enemy
       friend = pilot.add("Nasin Assault Fleet",nil,meetsys)
       for i,p in ipairs(enemy) do
          p:setNoLand()
          p:setNoJump()
+         p:setVisible(true)
+         p:setHostile(true)
       end
       for i,p in ipairs(friend) do
+         p:setVisible(true)
          p:setNoLand()
          p:setNoJump()
+         p:setFriendly(true)
       end
-      hook.timer(30000,"enter_shuttles")
-      hook.timer(120000,"reinforcements")
+      hook.timer(40000,"enter_shuttles")
+      hook.timer(140000,"reinforcements")
       hook.pilot(nil,"death","death")
       hook.pilot(nil,"land","ms_land")
    end
@@ -153,30 +174,44 @@ function jumper()
 end
 
 function space_meeting() --for meeting the friendly fleet in the meetup system
-   if current_time == nil then
-      current_time = time.get()
-      tk.msg("current_time set",current_time:str())
+   if runthrough == nil then
+      if current_time == nil then
+	 current_time = time.get()
+      end
+      if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,150) then --THIS. THIS WORKS.
+	 good_fleet[1]:broadcast(brief[1],false)
+      elseif time.get() >= current_time + time.create(0,0,151) and time.get() <= current_time + time.create(0,0,250) then
+	 good_fleet[1]:broadcast(brief[2],false)
+      elseif time.get() >= current_time + time.create(0,0,251) and time.get() <= current_time + time.create(0,0,350) then
+	 good_fleet[1]:broadcast(brief[3],false)
+      elseif time.get() >= current_time + time.create(0,0,351) and time.get() <= current_time + time.create(0,0,450) then
+	 good_fleet[1]:broadcast(brief[4],false)
+      elseif time.get() >= current_time + time.create(0,0,451) and time.get() <= current_time + time.create(0,0,550) then
+         good_fleet[1]:broadcast(brief[5],false)
+	 misn.osdActive(2)
+	 for i,p in ipairs(good_fleet) do
+	    if i == 1 or i == 2 or i == 3 then
+	       p:hyperspace(targetsys)
+	    elseif good_fleet[math.ceil(i/3)] ~= nil then
+               p:follow(good_fleet[math.ceil(i/3)])
+	    else
+	       p:follow(good_fleet[1])
+            end
+	 end
+	 runthrough = 1
+	 misn.markerMove(meetthemark,targetsys)
+      end
    end
-   tk.msg("was a infinite loop!" , "the space meeting function got triggered!") --helping me debug
-   if time.get() >= current_time+time.create(0,0,147) and time.get() <= current_time + time.create(0,0,250) then --THIS. THIS WORKS.
-      good_fleet[1]:broadcast(brief[1],false)
-   elseif time.get() == current_time+time.create(0,0,400) then
-      good_fleet[1]:broadcast(brief[2],false)
-   elseif time.get() == current_time+time.create(0,0,800) then
-      good_fleet[1]:broadcast(brief[3],false)
-   elseif time.get() == current_time+time.create(0,0,1200) then
-      good_fleet[1]:broadcast(brief[4],false)
-   elseif time.get() == current_time+time.create(0,0,1600) then
-      misn.osdActive(2)
-      for i,pilot in ipairs(good_fleet) do
-         if i == 1 then
-            pilot:hyperspace(targetsys)
-         else
-            pilot:follow(good_fleet[i-1])
+end
+
+function time_for_jump(p_jumper)
+   if p_jumper == good_fleet[1] or p_jumper == good_fleet[2] or p_jumper == good_fleet[3] then
+      for i,p in ipairs(good_fleet) do
+         if p ~= p_jumper and p ~= nil then
+	    p:hyperspace(targetsys)
          end
       end
    end
-   misn.markerMove(meetthemark,targetsys)
 end
 
 function enter_shuttles()
@@ -184,8 +219,17 @@ function enter_shuttles()
    num_shuttle = #shuttle
    for i,p in ipairs(shuttle) do
       p:setHilight()
+      p:setFriendly()
+      p:setVisible(true)
       p:control()
       p:land(targetasset)
+   end
+   ghelp = pilot.add("Nasin Med Defense Fleet",nil,meetsys)
+   for i,p in ipairs(ghelp) do
+      p:setFriendly()
+      p:setVisible(true)
+      p:setNoLand(true)
+      p:setNoJump(true)
    end
    for _,p in ipairs(friend) do
       if p:exists() and shuttler_check == nil then
@@ -197,11 +241,21 @@ function enter_shuttles()
 end
 
 function reinforcements()
-   enemy2 = pilot.add("Sirius Defense Fleet")
+   enemy2 = pilot.add("Sirius Med Patrol",nil,system.get("Gutter"))
+   enemy3 = pilot.add("Sirius Recon Force",nil,system.get("Gutter"))
    for i,p in ipairs(enemy2) do
       table.insert(enemy,p)
       p:setNoLand()
       p:setNoJump()
+      p:setHostile()
+      p:setVisible(true)
+   end
+   for i,p in ipairs(enemy3) do
+      table.insert(enemy,p)
+      p:setNoLand()
+      p:setNoJump()
+      p:setHostile()
+      p:setVisible(true)
    end
    for _,p in ipairs(friend) do
      if p:exists() and reinforce_check == nil then
@@ -225,8 +279,8 @@ function death(deadpilot) --track sirius deaths and shuttle deaths
          tk.msg(misn_title,time_to_return)
       end
    end
-   for i,pilot in ipairs(shuttle) do
-      if pilot == deadpilot then
+   for i,p in ipairs(shuttle) do
+      if p == deadpilot then
          shuttles_killed = shuttles_killed + 1
       end
       if shuttles_killed == num_shuttle then
@@ -238,16 +292,19 @@ function death(deadpilot) --track sirius deaths and shuttle deaths
 end
 
 function ms_land(landingpilot) --when the shuttles land
-   for i,pilot in ipairs(shuttle) do
-      if pilot == landing and landing_check == num_shuttle - shuttles_killed then
-         tk.msg(misn_title,shuttles_have_docked)
+   for i,p in ipairs(shuttle) do
+      if p == landingpilot then
+         landing_check = landing_check + 1
+         if landing_check == num_shuttle - shuttles_killed then
+            tk.msg(misn_title,shuttles_have_docked)
+         end
       end
    end
 end
 
 function land() --when the player lands
-   if mission_status == 2 and planet.cur() == homeasset then
-      emsg[1] = emsg[1]:format(homeasset:name())
+   if mission_status == 2 and planet.cur() == endasset then
+      emsg[1] = emsg[1]:format(endasset:name())
       emsg[3] = emsg[3]:format(player.name())
       tk.msg(misn_title,emsg[1])
       tk.msg(misn_title,emsg[2])
