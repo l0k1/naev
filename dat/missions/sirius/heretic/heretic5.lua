@@ -449,7 +449,8 @@ function land()
       tracker = var.peek("heretic_misn_tracker")
       tracker = tracker + 1
       faction.modPlayer("Nasin",rep_to_add)
-      --~ var.push("heretic_misn_tracker",tracker)   --holding off on this until mission is finished.
+      var.push("heretic_system_state",1)
+      var.push("heretic_misn_tracker",tracker)
       misn.finish(true)
    elseif mission_status == 1 then
       tk.msg(misn_title,premature_landing)

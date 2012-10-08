@@ -185,4 +185,10 @@
   <chance>15</chance>
   <cond>player.misnDone("Kidnapped") == false and var.peek("traffic_00_active") == nil and system.cur():name() == "Arcturus"</cond>
  </event>
+ <event name="Heretic System Control">
+  <lua>sirius/heretic_helper</lua>
+  <trigger>enter</trigger>
+  <chance>100</chance>
+  <cond>player.misnDone("The Shutdown")</cond>
+ </event>
 </Events>

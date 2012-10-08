@@ -821,6 +821,7 @@
   <mission name="The Shutdown">
   <lua>sirius/heretic/heretic5</lua>
   <flags>
+   <unique />
   </flags>
   <avail>
    <cond>var.peek("heretic_misn_tracker") == 5</cond>
