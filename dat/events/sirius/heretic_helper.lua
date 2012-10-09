@@ -107,11 +107,13 @@ function death(deadpilot)
       dead_sirius = dead_sirius + 1
       if dead_sirius == #enemy then
 	 for i,p in ipairs(friend) do
-	    p:setNoJump(false)
-	    p:setNoLand(false)
-	    if p:exists() and msg_check == nil then
-	       p:broadcast(enemy_fleet_dead[rnd.rnd(1,5)])
-	       msg_check = "check!"
+	    if p:exists() then
+	       p:setNoJump(false)
+	       p:setNoLand(false)
+	       if msg_check == nil then
+		  p:broadcast(enemy_fleet_dead[rnd.rnd(1,5)])
+		  msg_check = "check!"
+	       end
 	    end
          end
       end
