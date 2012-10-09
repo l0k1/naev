@@ -15,12 +15,12 @@ enemy_fleet_dead = {
 
 function create()
 
-   tk.msg("heretic system state","has been initiated!")  --debug
+
    dead_nasin = 0
    dead_sirius = 0
 
    key = var.peek("heretic_system_state")
-   tk.msg("key",key) --debug
+
    --Nasin_systems list systems that will be controlled by the Nasin at some point.
 
    nasin_systems = {}
