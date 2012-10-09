@@ -30,7 +30,8 @@ emsg = {}
 emsg[1] = [[You land on %s, grateful to have made it out of the mission alive. These Nasin were getting serious, and the Sirius are getting angry. You land in the hanger and step out of your ship, to be greeted by Mase Attes. He is grinning ear to ear, obviously quite happy at the success of the assault. He claps you on the shoulder, and the two of you begin walking towards the rear of the hanger together. He begins to speak.
 "I'm glad you made it out of there. I would hate to have your first mission for me end in your ship getting blown up! It would've looked bad for the fleet." He smiles. "That stuff should only happen with those crazy special forces guys." He shakes his head.]] --homeasset
 emsg[2] = [[As though thinking of some grand, new idea, he looks to you with a gleam in his eye. "You know, our special forces just recently formed with our push towards militism. If your performance is good enough under me, I can tell Thomorr to put in a good word for you over there. Crazy stuff, those kids. I've heard rumours of deep interception missions, hunting and assassinating high-ranking officials, and other things that have a high mortality rate. I'm sure they'd love to have a crazy kid like you!"]]
-emsg[3] = [[You and Attes reach the back of the hanger, and turn around. You and him survey the myriad of ships in the hanger, both taking off and landing. "You did good out there, %s. I'm glad to have you on board. You should know, your in now. We appreciate your dedication and loyalty." He coughs. "We are planning another assault. Come and meet me in the bar when your ready to take down another Sirius asset. Payment for this mission has already been credited to your account." With this, he shakes your hand gratefully and strides out, leaving you alone at the back of the hanger.]] --playername
+emsg[3] = [[Attes tilts his head slightly, listening to some new information that is coming in through an earpiece. "Good news! We staged an assault on the Sirius assets in another system, and the assault there went well too. We have made some great headway today!" He looks excited and energetic, and apparently the news is spreading to the other Nasin in the hanger. You see several people high-fiving, and another couple hugging. "We have a firm foothold on several Sirius assets. You'll know the systems belong to us if you see Nasin flying around, and a severe lack of Sirius ships. You should be able to land on all the assets in the system, as we have taken all of the starports. There may still be resistance here and there, and they might still appear unfriendly in your nav system, but you should be fine. Just be leery of any counter-attacks."]]
+emsg[4] = [[You and Attes reach the back of the hanger, and turn around. You and him survey the myriad of ships in the hanger, both taking off and landing. "You did good out there, %s. I'm glad to have you on board. You should know, your in now. We appreciate your dedication and loyalty." He coughs. "We are planning another assault. Come and meet me in the bar when your ready to take down another Sirius asset. Payment for this mission has already been credited to your account." With this, he shakes your hand gratefully and strides out, leaving you alone at the back of the hanger.]] --playername
 
 --Conversation choices
 
@@ -440,10 +441,11 @@ function land()
 
    if mission_status == 2 and planet.cur() == endasset then
       emsg[1] = emsg[1]:format(endasset:name())
-      emsg[3] = emsg[3]:format(player.name())
+      emsg[4] = emsg[4]:format(player.name())
       tk.msg(misn_title,emsg[1])
       tk.msg(misn_title,emsg[2])
       tk.msg(misn_title,emsg[3])
+      tk.msg(misn_title,emsg[4])
       player.pay(reward)
       rep_to_add = 7 - shuttles_killed
       tracker = var.peek("heretic_misn_tracker")
