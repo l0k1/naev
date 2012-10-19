@@ -1,5 +1,6 @@
---This is to help with the random events that should surround an invasion.
---This seems more dynamic than a bunch of unidiffs.
+--[[HERETIC HELPER!]]
+
+--[[This is a helper event for the heresy war campaign. This is being used to control Sirius spawning inside what should be Nasin controlled space. I've also used this to introduce random fleet battles, to give the impression that yes, the Sirius are fighting back. I went with this over unidiffs, as this just seems more dynamic.]]
 
 --TODO:
 --Mark Nasin controlled systems via system.addMarker.
@@ -19,17 +20,123 @@ function create()
    dead_nasin = 0
    dead_sirius = 0
 
+   if not evt.claim(system.cur()) then
+      evt.finish()
+   end
+
    key = var.peek("heretic_system_state")
 
    --Nasin_systems list systems that will be controlled by the Nasin at some point.
+   --I've broken in out into nasin_systems[x] for more clarity.
 
    nasin_systems = {}
    nasin_systems[1] = {
       system.get("Chraan"),
       system.get("Nougat"),
       system.get("Esker"),
-      system.get("Eye of Night")
+      system.get("Eye of Night"),
+      system.get("Gutter"),
+      system.get("Pike")
    }
+
+   nasin_systems[2] = {
+      system.get("Chraan"),
+      system.get("Nougat"),
+      system.get("Esker"),
+      system.get("Eye of Night"),
+      system.get("Gutter"),
+      system.get("Pike"), --here and lower are new to [2].
+      system.get("Kraft"),
+      system.get("Neon"),
+      system.get("Nixon"),
+      system.get("Kiwi"),
+      system.get("Pellmell"),
+      system.get("Tartan"),
+      system.get("Kyo"),
+      system.get("Scarlet"),
+      system.get("Valur Gem"),
+      system.get("Druss"),
+      system.get("Rhu"),
+      system.get("Quai"),
+      system.get("Ruttwi"),
+      system.get("Lapis"),
+      system.get("Niger"),
+      system.get("Lazuli"),
+      system.get("Anarbalis")
+   }
+
+   nasin_systems[3] = {
+      system.get("Chraan"),
+      system.get("Nougat"),
+      system.get("Esker"),
+      system.get("Eye of Night"),
+      system.get("Gutter"),
+      system.get("Pike"), --[2]
+      system.get("Kraft"),
+      system.get("Neon"),
+      system.get("Nixon"),
+      system.get("Kiwi"),
+      system.get("Pellmell"),
+      system.get("Tartan"),
+      system.get("Kyo"),
+      system.get("Scarlet"),
+      system.get("Valur Gem"),
+      system.get("Druss"),
+      system.get("Rhu"),
+      system.get("Quai"),
+      system.get("Ruttwi"),
+      system.get("Lapis"),
+      system.get("Niger"),
+      system.get("Lazuli"),
+      system.get("Anarbalis"), --here and lower are new to [3]
+      system.get("Fulcrum"),
+      system.get("Duros"),
+      system.get("Palovi"),
+      system.get("Modus Manis"),
+      system.get("Humdrum"),
+      system.get("An'ku")
+   }
+
+   nasin_systems[4] = {
+      system.get("Chraan"),
+      system.get("Nougat"),
+      system.get("Esker"),
+      system.get("Eye of Night"),
+      system.get("Gutter"),
+      system.get("Pike"), --[2]
+      system.get("Kraft"),
+      system.get("Neon"),
+      system.get("Nixon"),
+      system.get("Kiwi"),
+      system.get("Pellmell"),
+      system.get("Tartan"),
+      system.get("Kyo"),
+      system.get("Scarlet"),
+      system.get("Valur Gem"),
+      system.get("Druss"),
+      system.get("Rhu"),
+      system.get("Quai"),
+      system.get("Ruttwi"),
+      system.get("Lapis"),
+      system.get("Niger"),
+      system.get("Lazuli"),
+      system.get("Anarbalis"), --[3]
+      system.get("Fulcrum"),
+      system.get("Duros"),
+      system.get("Palovi"),
+      system.get("Modus Manis"),
+      system.get("Humdrum"),
+      system.get("An'ku"), --here and lower are new to [4]
+      system.get("Monogram"),
+      system.get("Suna"),
+      system.get("Anrique"),
+      system.get("Herakin"),
+      system.get("Eiderdown"),
+      system.get("Willow"),
+      system.get("Gilligan's Memory"),
+      system.get("Tarmak")
+   }
+
 
    systemControl()
 
@@ -96,6 +203,7 @@ function systemControl()
 	 end
       end
    end
+   hook.jumpout("eventFinish")
 end
 
 
@@ -133,4 +241,12 @@ function death(deadpilot)
          end
       end
    end
+end
+
+function eventFinish()
+
+   --Cleans up event proper-like.
+
+   evt.finish()
+
 end
