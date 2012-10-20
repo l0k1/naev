@@ -818,7 +818,7 @@
    <planet>The Wringer</planet>
   </avail>
  </mission>
-  <mission name="The Shutdown">
+ <mission name="The Shutdown">
   <lua>sirius/heretic/heretic5</lua>
   <flags>
    <unique />
@@ -830,5 +830,14 @@
    <planet>Ulios</planet>
   </avail>
  </mission>
-
+ <mission name="The Aggressor">
+  <lua>sirius/heretic/heretic6</lua>
+  <flags />
+  <avail>
+   <cond>var.peek("heretic_misn_tracker") == 6</cond>
+   <chance>100</chance>
+   <location>Bar</location>
+   <planet>Atalanta</planet>
+  </avail>
+ </mission>
 </Missions>
