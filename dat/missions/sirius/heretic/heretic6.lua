@@ -24,7 +24,7 @@ bmsg[8] = [[Heson casts a glance at Attes, and then Homons. "The money doesn't m
 bmsg[9] = [[Heson claps his hands once. "Great! We have a briefing we need to get to. You were late to the party last time and got miss out. Not that I'm jealous or anything." He turns to Attes and Homons, and says as he stands up, "Attes, we should get going. Homons, as usual it was good to see you. I hope we meet again under such favourable circumstances." He winked at Homons, and he and Attes led you out of the bar.]]
 bmsg[10] = [[Heson and Attes led you to a small side room, off the back of one of the hangers. Once inside, you see that the small room is filled with a wealth of people. Attes weaves his way to the other end of the room, where the is a raised dias, and Heson explains things to you. "These are all the pilots you fly with. That big guy over there," he points to a richly dressed fat man in blue, "is the captain of one of the Kestrels. Word is, he helped design the weapons cooling system, so his is somehow supped up and amazing. And those two," he now points at a couple, who are lounging around in the back chatting idly, "are Marck and Qate, who pilot a couple Admonishers. Amazing pilots, all of them. So, now Attes is going to go tell us how we are going to go about assaulting our next target." Attes, timing it perfectly with Hesons monologue to you, clears his throat and the room falls silent.]]
 bmsg[11] = [[Attes looks everyone over, giving a moment for the silence to set in. "Alright, ladies and gents, first off, Homons sends his gratitude and congratulations for a job well done on our last mission." A couple whoops from around the room give rise to a little laughter. "You all did a fine job, and I am glad you returned home. Those that didn't... well, they will be missed. I will never forget them." Attes pauses for another silent moment, to emphasis this point. "As some of you may have heard, our next assault will be on %s. Our over-arching goal here is to meet up with 4th fleet, who is pushing north towards us as we speak. When we connect with them, there will be a unified front between 2nd fleet, 4th fleet, 7th fleet, 8th fleet and the glorious 9th fleet!" Attes pumps his fist into the air, and small cheers erupt from the gather pilots.]] --targetsystem
-bmsg[12] = [[Attes continues. "But now, for some more business!" The lights flick out, and a holovid appears in the middle of the room, showing a map of the system. "We will be jumping in from this point here, and our primary objective is to be taking %s. It is the military stronghold in this sector, so don't expect this to go easy. The shuttles will be, I repeat, will be jumping in with us. We need to protect them, and they can take care of stuff when they land. They have some crazy stuff planned for that station. After we jump in, 7th fleet will follow us shortly. They are tasked with obtaining control of any other assets. We expect all the other assets to be more minor, so their marines will have an easier time. Things to keep in mind: We jump first, so we take the biggest hit. 7th fleet will help us out, but they'll be a long time coming. Also, after we are done, we will be landing on %s to regroup. We will be taking off quickly, word is Overwatch Command has a special assignment for us." More hoots and jeers.]] --targetasset, targetasset.
+bmsg[12] = [[Attes continues. "But now, for some more business!" The lights flick out, and a holovid appears in the middle of the room, showing a map of the system. "We will be jumping in from this point here, and our primary objective is to be taking %s. It is the military stronghold in this sector, so don't expect this to go easy. The shuttles will be, I repeat, will be jumping in with us. We need to protect them, and they can take care of stuff when they land. They have some crazy stuff planned for that station. They will be beelining for the station, so we just need to hold off their forces. After we jump in, 7th fleet will follow us shortly. They are tasked with obtaining control of any other assets. We expect all the other assets to be more minor, so their marines will have an easier time. Things to keep in mind: We jump first, so we take the biggest hit. 7th fleet will help us out, but they'll be a long time coming. Also, after we are done, we will be landing on %s to regroup. We will be taking off quickly, word is Overwatch Command has a special assignment for us." More hoots and jeers.]] --targetasset, targetasset.
 bmsg[13] = [[Attes smiles at everyone. "Alright people, in a nutshell. Fly to %s. Kick some butt. Take some names. Regroup on %s. Sound good?" Nods bobbed heads up and down here and there. "Alright! Lets do this! We will meet above %s in %s, so hurry up!" The small group cheers, and then slowly files out of their room to make final preps before taking off. You follow their lead, and begin prepping yourself.]] --meetasset, meetsys
 --The following section is for "Let me think about this." 
 bmsg[14] = [[The three men sitting around the table look suprised at this statement. Homons is the first to recover, and he begins to speak. "Well, I guess thats fine. Just please understand the urgency of the situation, and hurry back here to us. House Sirius won't wait forever. May Sirichana be with you." At that, he guestured to the other two men, and they got up together and walked out of the bar.]]
@@ -188,8 +188,8 @@ function jumper()
       pilot.clear()
       pilot.toggleSpawn("Sirius",false)
       pilot.toggleSpawn("Pirate",false)
-      enemy = pilot.add("Sirius Defense Fleet",nil,targetasset:pos())
-      enemy1 = pilot.add("Sirius Defense Fleet",nil,sectarget:pos())
+      enemy = pilot.add("Sirius Defense Fleet",nil,(targetasset:pos()+sectarget:pos()/2))
+      enemy1 = pilot.add("Sirius Defense Fleet",nil,vec2.new(rnd.rnd(-1000,-8000),rnd.rnd(-1000,-8000)))
  
       for i,p in ipairs(enemy1) do
 	 table.insert(enemy,p)
@@ -211,13 +211,15 @@ function jumper()
       end
       for i,p in ipairs(shuts) do
 	 p:setVisible(true)
-	 p:setNoLand()
-	 p:setNoJump()
+	 p:control(true)
+	 p:land(targetasset)
 	 p:setFriendly(true)
+	 p:setHilight(true)
       end
 
-      hook.timer(60000,"nasinBackup")
-      hook.timer(90000,"siriusBackup")
+      hook.timer(40000,"nasinBackup")
+      hook.timer(100000,"siriusBackup")
+      hook.timer(110000,"nasinMoreBackup")
       hook.pilot(nil,"death","death")
       hook.pilot(nil,"land","ms_land")
    end
@@ -232,12 +234,60 @@ end
 
 
 function nasinBackup()
+
+   --This jumps in another fleet, which is supposed to help the players fleet. Their main obj is Burnan, but we'll see how that works.
+
+   --Initialize the fleets.
+
+   friendBkup = pilot.add("Nasin Assault Fleet",nil,meetsys)
+   shutsBkup = pilot.add("Nasin Marine Shuttles",nil,meetsys)
+
+   --Set up the fleets right.
+   for i,p in ipairs(friendBkup) do
+      p:setVisible(true)
+      p:setFriendly(true)
+      p:setNoLand(true)
+      p:setNoJump(true)
+      table.insert(friend,p)
+   end
+   for i,p in ipairs(shutsBkup) do
+      p:control()
+      p:setVisible(true)
+      p:setFriendly(true)
+      p:land(sectarget)
+      p:setHilight(true)
+      table.insert(shuts,p)  
+   end
+end
+
+function nasinMoreBackup()
+
+   --Just to even the odds a little more.
+
+   --initialize!
+
+   moreBackup = pilot.add("Nasin Med Defense Fleet",nil,meetsys)
+  
+   --set up correctly.
+
+   for i,p in ipairs(moreBackup) do
+      p:setNoJump(true)
+      p:setNoLand(true)
+      p:setVisible(true)
+      p:setFriendly(true)
+   end
 end
 
 function siriusBackup()
+
    enemy_r = pilot.add("Sirius Defense Fleet",nil,system.get("Valur Gem"))
    for i,p in ipairs(enemy_r) do
       table.insert(enemy,p)
+      p:setHostile(true)
+      p:setVisible(true)
+      p:setNoLand(true)
+      p:setNoJump(true)
+
    end
 end
 
@@ -297,6 +347,9 @@ function time_for_jump(p_jumper)
 	    p:hyperspace(targetsys)
          end
       end
+      for i,p in ipairs(shuts) do
+	 p:hyperspace(targetsys)
+      end
    end
 end
 
@@ -341,7 +394,9 @@ end
 function ms_land(landingpilot)
 
 --This function tracks whether or not all of the alive shuttles have landed. 
-
+   if landing_check == nil then
+      landing_check = 0
+   end
    for i,p in ipairs(shuts) do
       if p == landingpilot then
          landing_check = landing_check + 1
