@@ -29,6 +29,12 @@ bmsg[13] = [[Attes smiles at everyone. "Alright people, in a nutshell. Fly to %s
 --The following section is for "Let me think about this." 
 bmsg[14] = [[The three men sitting around the table look suprised at this statement. Homons is the first to recover, and he begins to speak. "Well, I guess thats fine. Just please understand the urgency of the situation, and hurry back here to us. House Sirius won't wait forever. May Sirichana be with you." At that, he guestured to the other two men, and they got up together and walked out of the bar.]]
 
+--Ending messages
+
+emsg = {}
+emsg[1] = [[I'm a placeholder!]]
+emsg[2] = [[Me too!!!]]
+
 --Convo choices
 
 convo_c = {}
@@ -43,23 +49,49 @@ convo_c[6] = [[Let me think about this. I'll be right back.]]
 
 brief = {}
 brief[1] = [[Glad to have you all back. This is gonna be heavier than last time.]]
-brief[2] = [[Remember, get the shuttles to the station. This is priority 1.]]
+brief[2] = [[Remember, get the shuttles to the station. This is priority one.]]
 brief[3] = [[If you try and jump out-sys or land prematurely I'll shoot you myself, so don't do it.]]
 brief[4] = [[Obelisk Station doesn't stand a chance. Lets destroy them!]]
 brief[5] = [[Let's do this!]]
+
+--In flight messages to be used during the assault.
+
+ifm = {}
+ifm[1] = [[7th fleet has arrived with their shuttles! Watch their backs too!]]
+ifm[2] = [[A Sirius response fleet has just jumped in. Watch yourself!]]
+ifm[3] = [[A shuttle just got destroyed! There are only %d left! Guard them with your life!]] --#shuts
+ifm[4] = [[Some more Nasin backup just jumped in!]]
+ifm[5] = [[Great job guys! Lets head to %s to debrief!]]
+
+--Message for the nasin pilots to say after killing some baddies.
+
+kilb = {}
+kilb[1] = [[Got one!]]
+kilb[2] = [[Tango down, acquiring new target.]]
+kilb[3] = [[For Sirichana!!]]
+kilb[4] = [[Here's Johnny!]]
+kilb[5] = [[Well that takes care of that.]]
+kilb[6] = [[One more soul for the judgement hand of Sirichana.]]
+kilb[7] = [[All glory to Sirichana!]]
+kilb[8] = [[And another soul perishes.]]
+kilb[9] = [[Untouchable!]]
+kilb[10] = [[Mark one more dead.]]
 
 --Random descriptions
 
 bar_desc = [[You see Attes sitting with two men you haven't seen before. They're sitting around a table chatting.]]
 npc_name = [[Attes]]
-misn_desc = [[Assault %s, while protecting the marine shuttles. 7th fleet will be jumping in to help.]] --targetsys
+misn_desc =[[Assault %s, while protecting the marine shuttles. 7th fleet will be jumping in to help.]] --targetsys
+shuttles_have_docked = [[Your comm station blares to life, and you see a commander for one of the shuttles pop up. "Hey! Thanks for the escort! We've touched down, and are breaching main sections of the station now. We are good to go!" The comm station goes quiet once again.]]
+shuttles_have_died = [[Your priority comm channel opens pretty much as soon as the last piece of Sirius ordinance rips through the final shuttle. Attes' voice fills your cabin, "The shuttles are all gone boys. Fall back, and we will regroup and come up with something else. Thanks, boys." The channel cuts out, and an awkward silence fills the space, before several flashes remind you that even though the shuttles have died and the mission is over, you are still surrounded by hostile Sirius.]]
 
 --Mission OSD
 
 osd = {}
 osd[1] = [[Fly to %s and meetup with the main fleet over %s.]] --meetsys, meetasset
-osd[2] = [[Fly to %s to help assault %s. Help guard the shuttles.]] --targetsys, target asset
-osd[3] = [[Rendevoux with the main fleet on %s in %s.]] --targetasset,targetsys
+osd[2] = [[Fly to %s to help assault %s.]]
+osd[3] = [[Take out the opposing Sirius fleet, while guarding the shuttles.]] --targetsys, target asset
+osd[4] = [[Rendevoux with the main fleet on %s in %s.]] --targetasset,targetsys
 
 
 function create()
@@ -119,10 +151,8 @@ function accept()
    misn.accept()
 
 --Set up the OSD.
-   osd[1] = osd[1]:format(meetsys:name(),meetasset:name())
-   osd[2] = osd[2]:format(targetsys:name(),targetasset:name())
-   osd[3] = osd[3]:format(targetasset:name(),targetsys:name())
-   
+
+   creatingTheOsd()
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
 
@@ -143,6 +173,25 @@ function accept()
 
 end
 
+function creatingTheOsd()
+
+   osd[1] = osd[1]:format(meetsys:name(),meetasset:name())
+   osd[2] = osd[2]:format(targetsys:name(),targetasset:name())
+   osd[3] = osd[3]:format(targetasset:name(),targetsys:name())
+   osd[4] = osd[4]:format(targetasset:name(),targetsys:name())
+
+end
+
+function updatingTheOsd()
+   
+   misn.osdDestroy()
+   creatingTheOsd()
+   osd[3] = [[Take out the opposing Sirius fleet, while guarding the shuttles. There are %d out of %d shuttles left alive.]] --aliveshuts,#shuts
+   osd[3] = osd[3]:format(#shuts,#shuts)
+   misn.osdCreate(misn_title,osd)
+   misn.osdActive(3)
+
+end
 
 function jumper()
 
@@ -191,6 +240,9 @@ function jumper()
       enemy = pilot.add("Sirius Defense Fleet",nil,(targetasset:pos()+sectarget:pos()/2))
       enemy1 = pilot.add("Sirius Defense Fleet",nil,vec2.new(rnd.rnd(-1000,-8000),rnd.rnd(-1000,-8000)))
  
+      --Set up the OSD.
+      updatingTheOsd()
+
       for i,p in ipairs(enemy1) do
 	 table.insert(enemy,p)
       end
@@ -218,8 +270,8 @@ function jumper()
       end
 
       hook.timer(40000,"nasinBackup")
-      hook.timer(100000,"siriusBackup")
-      hook.timer(110000,"nasinMoreBackup")
+      hook.timer(115000,"siriusBackup")
+      hook.timer(140000,"nasinMoreBackup")
       hook.pilot(nil,"death","death")
       hook.pilot(nil,"land","ms_land")
    end
@@ -258,6 +310,21 @@ function nasinBackup()
       p:setHilight(true)
       table.insert(shuts,p)  
    end
+
+   --Let the player know about this new development.
+   
+   msg_check = nil
+   for i,p in ipairs(friend) do
+      if p:exists() and msg_check == nil then
+	 p:broadcast(ifm[1])
+	 msg_check = "check!"
+      end
+   end
+   
+   --Redo the OSD
+   updatingTheOsd()
+
+
 end
 
 function nasinMoreBackup()
@@ -275,10 +342,23 @@ function nasinMoreBackup()
       p:setNoLand(true)
       p:setVisible(true)
       p:setFriendly(true)
+      table.insert(friend,p)
    end
+
+   --Let the player know.
+   msg_check = nil
+   for i,p in ipairs(friend) do
+      if p:exists() and msg_check == nil then
+	 p:broadcast(ifm[4],true)
+	 msg_check = "check!"
+      end
+   end
+
 end
 
 function siriusBackup()
+
+   --Jumps in a Sirius response fleet.
 
    enemy_r = pilot.add("Sirius Defense Fleet",nil,system.get("Valur Gem"))
    for i,p in ipairs(enemy_r) do
@@ -287,14 +367,24 @@ function siriusBackup()
       p:setVisible(true)
       p:setNoLand(true)
       p:setNoJump(true)
-
    end
+   reinforce_check = "check!"
+   --Let the player know.
+
+   msg_check = nil
+   for i,p in ipairs(friend) do 
+      if p:exists() and msg_check == nil then
+	 p:broadcast(ifm[2],true)
+	 msg_check = "check!"
+      end
+   end
+
 end
 
 function space_meeting()
 
---This function handles the in-space dialogue after the player meets
---up with the main fleet.
+   --This function handles the in-space dialogue after the player
+   --meets up with the main fleet.
    
    if sm_runthrough == nil then
       if current_time == nil then
@@ -328,7 +418,12 @@ function space_meeting()
             end
 	 end
 	 for i,p in ipairs(shuts) do
-	    p:follow(good_fleet[1])
+	    if followCheck == nil then
+	       p:follow(good_fleet[1])
+	       followCheck = "following!"
+	    else
+	       p:follow(shuts[i-1])
+	    end
 	 end
 	 misn.markerMove(meetthemark,targetsys)
 	 sm_runthrough = 1
@@ -338,8 +433,8 @@ end
 
 function time_for_jump(p_jumper)
 
---After the "lead" ships in the meetsys have jumped, the remainder of the
---ships will then be told to jump.
+   --After the "lead" ships in the meetsys have jumped, the remainder
+   --ships will then be told to jump.
 
    if p_jumper == good_fleet[1] or p_jumper == good_fleet[2] or p_jumper == good_fleet[3] then
       for i,p in ipairs(good_fleet) do
@@ -353,13 +448,14 @@ function time_for_jump(p_jumper)
    end
 end
 
-function death(deadpilot)
+function death(deadpilot,killer)
 
---This function tracks the deaths of both the Sirius fleet, in regards to
---completing the mission, as well as the amount of shuttles that are still
---alive, in regards to failing the mission.
+   --This function tracks the deaths of both the Sirius fleet, in regards to
+   --completing the mission, as well as the amount of shuttles that are still
+   --alive, in regards to failing the mission.
 
---First part is for the Sirius.
+   --First part is for the Sirius.
+   
    if deathcounter == nil then
       deathcounter = 0
    end
@@ -367,6 +463,11 @@ function death(deadpilot)
    faction_check = pilot.faction(deadpilot)
    if faction_check == faction.get("Sirius") then
       deathcounter = deathcounter + 1
+      chanceMsg = rnd.rnd(1,4)
+      if killer:exists() and chanceMsg == 1 then
+	 selectMsg = rnd.rnd(1,10)
+	 killer:broadcast(kilb[selectMsg])
+      end
    end
    if deathcounter == #enemy and reinforce_check == "check!" then
       all_enemy_killed = 1
@@ -378,17 +479,37 @@ function death(deadpilot)
    if shuts == nil then
       shuts = {}
    end
+
    if shuttles_killed == nil then
       shuttles_killed = 0
    end
    for i,p in ipairs(shuts) do
       if p == deadpilot then
          shuttles_killed = shuttles_killed + 1
+	 
+	 --We need to let the player know somehow.
+
+	 ifm[3] = ifm[3]:format(#shuts-shuttles_killed)
+	 msg_check = nil
+	 for i,p in ipairs(friend) do
+	    if p:exists() and msg_check == nil then
+	       p:broadcast(ifm[3],true)
+	       msg_check = "check!"
+	    end
+	 end
+	 
+	 --update the OSD
+	 updateTheOsd()
       end
+      
+      --end the mission if all the shuttles are killed.
+
       if shuttles_killed == #shuts then
+	 tk.msg(misn_title,shuttles_have_died)
 	 abort()
       end
    end
+
 end
 
 function ms_land(landingpilot)
@@ -404,6 +525,13 @@ function ms_land(landingpilot)
             tk.msg(misn_title,shuttles_have_docked)
             all_shuttles_landed = 1
             returning_time()
+
+	    --need to update the OSD regarding all the shuttles landed.
+	    misn.osdDestroy()
+	    creatingTheOsd()
+	    osd[3] = [[Take out the opposing Sirius fleet. All remaining shuttles have landed.]]
+	    misn.osdCreate(misn_title,osd)
+	    misn.osdActive(3)
          end
       end
    end
@@ -414,8 +542,26 @@ function returning_time()
 --After the mission objectives have been completed, this function cleans up the system
 
    if all_enemy_killed == 1 and all_shuttles_landed == 1 then
+
+      --Broadcast the mission objectives as complete.
+
+      ifm[5] = ifm[5]:format(targetasset:name())
+      message_check = nil
+      for i,p in ipairs(friends) do
+	 if p:exists() and message_check == nil then
+	    p:broadcast(ifm[5],true)
+	    message_check = "check!"
+	 end
+      end
+      
+      --Allow the player to land on Obelisk.
+
+      targetasset:landOverride(true)
+
+      --Clean stuff up and send the remaining pilots home.
+
       mission_status = 2
-      misn.osdActive(3)
+      misn.osdActive(4)
       for i,p in ipairs(friend) do
 	 if p:exists() then
             p:setNoLand(false)
@@ -432,6 +578,8 @@ function land()
    --Handles the end-of-mission.
 
    if mission_status == 2 and planet.cur() == targetasset then
+      tk.msg(misn_title,emsg[1])
+      tk.msg(misn_title,emsg[2])
       player.pay(reward)
       rep_to_add = 7 - shuttles_killed
       tracker = var.peek("heretic_misn_tracker")
