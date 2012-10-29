@@ -60,7 +60,7 @@ premature_land = [[As soon as you enter the atmosphere, your priority communicat
 osd = {}
 osd[1] = [[Fly to %s and meetup with the main fleet.]]
 osd[2] = [[Fly to %s to help attack %s.]]
-osd[3] = [[Protect the Marine shuttles, while destroying the opposing fleet.]]
+osd[3] = [[Take out the opposing Sirius fleet, while guarding the shuttles.]]
 osd[4] = [[Rendevoux with the main fleet on %s in %s.]]
 
 --The following messages are all broadcast in-space.
@@ -74,6 +74,20 @@ brief[2] = "After we've engaged, the shuttles and a couple reinforcements will j
 brief[3] = "I can't stress enough, protect them. Also, be expecting a quick reaction force from the Sirius."
 brief[4] = "We have to take this station! We have to kill them all! Remember Suna! Remember the slain!"
 brief[5] = "For Sirichana! Lets ride!"
+
+--Messages for the Nasin pilots to say after killing some baddies.
+
+kilb = {}
+kilb[1] = [[Got one!]]
+kilb[2] = [[Tango down, acquiring new target.]]
+kilb[3] = [[For Sirichana!!]]
+kilb[4] = [[Here's Johnny!]]
+kilb[5] = [[Well that takes care of that.]]
+kilb[6] = [[One more soul for the judgement hand of Sirichana.]]
+kilb[7] = [[All glory to Sirichana!]]
+kilb[8] = [[And another soul perishes.]]
+kilb[9] = [[Untouchable!]]
+kilb[10] = [[Mark one more dead.]]
 
 function create()
 
@@ -343,7 +357,7 @@ function reinforcements()
    end
 end
 
-function death(deadpilot)
+function death(deadpilot,killer)
 
 --This function tracks the deaths of both the Sirius fleet, in regards to
 --completing the mission, as well as the amount of shuttles that are still
@@ -354,6 +368,11 @@ function death(deadpilot)
    if misn_finish_check == nil then
       if faction_check == faction.get("Sirius") then
          deathcounter = deathcounter + 1
+	 chanceMsg = rnd.rnd(1,3)
+	 if killer:exists() and chanceMsg == 1 then
+	    selectMsg = rnd.rnd(1,10)
+	    killer:broadcast(kilb[selectMsg])
+	 end
       end
       if deathcounter == #enemy and reinforce_check == "check!" then
          all_enemy_killed = 1

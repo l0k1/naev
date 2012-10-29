@@ -32,8 +32,8 @@ bmsg[14] = [[The three men sitting around the table look suprised at this statem
 --Ending messages
 
 emsg = {}
-emsg[1] = [[I'm a placeholder!]]
-emsg[2] = [[Me too!!!]]
+emsg[1] = [[You land on %s with the other Nasin pilots, as ordered. Upon docking, you enter a large chamber. You can hear gunfire echoing in the distance. Obviously the fighting to take over this station is not over yet. You walk up to join a gathering crowd of pilots. You see Homons, who motions you over to join him. "That was pretty crazy stuff!" He starts speaking rapidly, still on an adrenaline rush after all the prior fighting. "I had like four fighters on my rump when Seventh Fleet jumped in. I was getting worried they were going to miss the party! Dang they cut it close." Homons shakes his head, and you hear someone clearing his throat in the middle of the group. A large explosion echoes dimly in the distance, as Attes begins to speak. "Ladies and gentlemen, good job! Seventh Fleet is currently tasked with maintaining the control of this system. Normally we'd be up there with them but..." Here he stopped for dramatic effect, probably pausing longer than necessary, "Ops Command has a special assignment for us!" Whoops and jeers filled the chamber.]] --targetasset
+emsg[2] = [[Some nearby cracks from a mass rifle had a few pilots ducking their heads. One pilot spoke up. "Hey, Attes, are the Marines going to be able to take this thing?" Attes looked at him and nodded. "Latest reports show we outnumber them three to one, and we currently have possesion of 65% of the station, including 80% of most major substations. We have this in the bag. Now, for our assignment! The enemy has holed up in a certain system of their space, and we've been tasked to deal the death blow." Another explosion rocked the space, and at this, Attes began to look a little worried, despite his previous re-assurance. He cocked his ear to one side, listening to an cochlear implant. "Bad news, gents. The Sirius have apparently bugged and booby-trapped the whole station. Meet up with your wing commanders in the bar, and they will brief you there. I have received word that they have set up isolation bubbles just for our use. Get going, as time is of the essense! You are dismissed!" Attes shouts these last words, and the group slowly disbands, some shuffling to their ships to see about post-combat damage repairs, others heading to the bar to get a drink while they wait for the briefings to start.]]
 
 --Convo choices
 
@@ -63,7 +63,7 @@ ifm[3] = [[A shuttle just got destroyed! There are only %d left! Guard them with
 ifm[4] = [[Some more Nasin backup just jumped in!]]
 ifm[5] = [[Great job guys! Lets head to %s to debrief!]]
 
---Message for the nasin pilots to say after killing some baddies.
+--Message for the Nasin pilots to say after killing some baddies.
 
 kilb = {}
 kilb[1] = [[Got one!]]
@@ -463,7 +463,7 @@ function death(deadpilot,killer)
    faction_check = pilot.faction(deadpilot)
    if faction_check == faction.get("Sirius") then
       deathcounter = deathcounter + 1
-      chanceMsg = rnd.rnd(1,4)
+      chanceMsg = rnd.rnd(1,3)
       if killer:exists() and chanceMsg == 1 then
 	 selectMsg = rnd.rnd(1,10)
 	 killer:broadcast(kilb[selectMsg])
@@ -578,6 +578,7 @@ function land()
    --Handles the end-of-mission.
 
    if mission_status == 2 and planet.cur() == targetasset then
+      emsg[1] = emsg[1]:format(targetasset:name())
       tk.msg(misn_title,emsg[1])
       tk.msg(misn_title,emsg[2])
       player.pay(reward)
