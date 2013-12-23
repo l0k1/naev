@@ -48,6 +48,11 @@
  <commodity name="The Rescued Children"/>
  <commodity name="Waste Containers"/>
  <commodity name="Person"/>
+ <commodity name="Unmarked Boxes"/>
+ <commodity name="Weapons"/>
+ <commodity name="Drugs"/>
+ <commodity name="Exotic Animals"/>
+ <commodity name="Radioactive Materials"/>
  <commodity name="Small Arms"/>
  <commodity name="Message"/>
 </Commodities>

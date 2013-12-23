@@ -108,7 +108,7 @@ end
 -- Dvaered High Command.
 function dv_mil_command( pnt )
    return land_military(pnt, 80,
-         "Permission to land granted, sir.",
+         "Permission to land granted, captain.",
          "Only high ranking personnel allowed. Landing request denied.",
          "Landing request denied.",
          "\"Money won't buy you access to our restricted facilities, citizen.\"")
@@ -130,6 +130,15 @@ function srm_mil_kataka( pnt )
          "Only friends of the Soromid may set foot on Kataka.",
          "Landing request denied.",
          "\"We don't need your money, outsider.\"")
+end
+
+-- Za'lek's military center.
+function zlk_ruadan( pnt )
+   return land_military(pnt, 75,
+         "Docking sequence transmitted.",
+         "Authorization level too low to grant authorization.",
+         "Authorization denied.",
+         "Money is irrelevant.")
 end
 
 -- Pirate clanworld.

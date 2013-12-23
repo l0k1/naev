@@ -3,7 +3,6 @@
 -- These missions require fast ships, but higher tiers may also require increased cargo space.
 --]]
 
-include "jumpdist.lua"
 include "cargo_common.lua"
 include "numstring.lua"
 
@@ -35,7 +34,7 @@ Time limit: %s]]
 
     full = {}
     full[1] = "No room in ship"
-    full[2] = "You don't have enough cargo space to accept this mission. You need %d tonnes of free space (you need %d more)."
+    full[2] = "You don't have enough cargo space to accept this mission. It requires %d tonnes of free space (you need %d more)."
 
    slow = {}
    slow[1] = "Too slow"
@@ -109,15 +108,17 @@ end
 
 -- Mission is accepted
 function accept()
+    if player.pilot():cargoFree() < amount then
+        tk.msg(full[1], full[2]:format(amount, amount - player.pilot():cargoFree()))
+        misn.finish()
+    end
+    pilot.cargoAdd( player.pilot(), cargo, amount ) 
     local playerbest = cargoGetTransit( timelimit, numjumps, traveldist )
+    pilot.cargoRm( player.pilot(), cargo, amount ) 
     if timelimit < playerbest then
         if not tk.yesno( slow[1], slow[2]:format( (timelimit - time.get()):str(), (playerbest - time.get()):str(), destplanet:name()) ) then
             misn.finish()
         end
-    end
-    if player.pilot():cargoFree() < amount then
-        tk.msg(full[1], full[2]:format(amount, amount - player.pilot():cargoFree()))
-        misn.finish()
     end
     misn.accept()
     intime = true

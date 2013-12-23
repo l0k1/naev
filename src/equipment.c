@@ -294,7 +294,8 @@ void equipment_open( unsigned int wid )
       "Fuel:\n"
       "\n"
       "Transportation:\n"
-      "Location:";
+      "Location:\n"
+      "Ship Status:";
    x = 20 + sw + 20 + 180 + 20 + 30;
    y = -190;
    window_addText( wid, x, y,
@@ -1163,6 +1164,10 @@ void equipment_regenLists( unsigned int wid, int outfits, int ships )
    nship    = 0;
    offship  = 0.;
 
+   /* Must exist. */
+   if (!window_existsID( equipment_wid ))
+      return;
+
    /* Save positions. */
    if (outfits) {
       for (i=0; i<OUTFIT_TABS; i++) {
@@ -1574,7 +1579,8 @@ eq_qCol( cur, base, inv ), cur
 void equipment_updateShips( unsigned int wid, char* str )
 {
    (void)str;
-   char buf[512], sysname[128], buf2[ECON_CRED_STRLEN], buf3[ECON_CRED_STRLEN];
+   char buf[1024], sysname[128], buf2[ECON_CRED_STRLEN], buf3[ECON_CRED_STRLEN];
+   char errorReport[256];
    char *shipname;
    Pilot *ship;
    char *loc, *nt;
@@ -1611,6 +1617,11 @@ void equipment_updateShips( unsigned int wid, char* str )
    credits2str( buf3, player_shipPrice(shipname), 2 ); /* sell price */
    cargo = pilot_cargoFree(ship) + pilot_cargoUsed(ship);
    nt = ntime_pretty( pilot_hyperspaceDelay( ship ), 2 );
+   
+   /* Get ship error report. */
+   pilot_reportSpaceworthy( ship, errorReport, sizeof(errorReport));
+  
+   /* Fill the buffer. */
    nsnprintf( buf, sizeof(buf),
          "%s\n"
          "%s\n"
@@ -1630,7 +1641,8 @@ void equipment_updateShips( unsigned int wid, char* str )
          "%.0f / \e%c%.0f\e0 units (%d jumps)\n"
          "\n"
          "%s credits\n"
-         "%s%s",
+         "%s%s\n"
+         "\e%c%s\e0",
          /* Generic. */
       ship->name,
       ship->ship->name,
@@ -1656,7 +1668,8 @@ void equipment_updateShips( unsigned int wid, char* str )
       ship->fuel, EQ_COMP( ship->fuel_max, ship->ship->fuel, 0 ), pilot_getJumps(ship),
       /* Transportation. */
       buf2,
-      loc, sysname );
+      loc, sysname,
+      pilot_checkSpaceworthy(ship) ? 'r' : '0', errorReport );
    window_modifyText( wid, "txtDDesc", buf );
 
    /* Clean up. */
@@ -1766,9 +1779,9 @@ static void equipment_changeShip( unsigned int wid )
    toolkit_setImageArrayOffset( wid, EQUIPMENT_SHIPS, 0. );
 }
 /**
- * @brief Player attempts to transport his ship to the planet he is at.
+ * @brief Player attempts to transport their ship to the planet they're at.
  *
- *    @param wid Window player is trying to transport his ship from.
+ *    @param wid Window player is trying to transport their ship from.
  */
 static void equipment_transportShip( unsigned int wid )
 {
@@ -1985,7 +1998,11 @@ static credits_t equipment_transportPrice( char* shipname )
    if (strcmp(loc,land_planet->name)==0) /* already here */
       return 0;
 
-   s = map_getJumpPath( &jumps, cur_system->name, planet_getSystem(loc), 1, NULL );
+   /* Here we also use hidden jump points, which may not be the best idea but ensures
+    * that things can be reached. */
+   s = map_getJumpPath( &jumps, cur_system->name, planet_getSystem(loc), 1, 1, NULL );
+   if (s==NULL)
+      jumps = 50; /* Just consider a large number. */
    free(s);
 
    /* Modest base price scales fairly rapidly with distance. */
