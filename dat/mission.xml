@@ -758,7 +758,7 @@
    <location>Bar</location>
   </avail>
  </mission>
- <mission name="The Gauntlet">
+<!--<mission name="The Gauntlet">
   <lua>sirius/heretic/heretic0</lua>
   <flags>
   <unique />
@@ -839,5 +839,5 @@
    <location>Bar</location>
    <planet>Atalanta</planet>
   </avail>
- </mission>
+ </mission>-->
 </Missions>
