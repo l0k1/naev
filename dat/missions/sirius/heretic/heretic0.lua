@@ -117,6 +117,9 @@ function land ()
          else
             player.pay(-450000)
          end
+         misn.cargoRm(small_arms)
+         misn.osdDestroy()
+         misn.finish( false )
       else
          tk.msg(misn_title,lmsg[2])
       end
@@ -125,4 +128,5 @@ end
 
 function abort ()
    misn.finish(false)
+   misn.cargoRm(small_arms)
 end
