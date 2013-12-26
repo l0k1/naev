@@ -127,6 +127,6 @@ function land ()
 end
 
 function abort ()
-   misn.finish(false)
    misn.cargoRm(small_arms)
+   misn.finish(false)
 end
