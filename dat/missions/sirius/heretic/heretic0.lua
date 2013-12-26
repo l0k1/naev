@@ -10,20 +10,19 @@ lang = naev.lang()
 
 --the intro messages
 bmsg = {}
-bmsg[1] = [[You walk up to a scrappy little man leaning against the bar. You sit next to him, and he eyes you up and down. You return the stare cooly. Lackadaisically, he strikes up a converrsation.
+bmsg[1] = [[You walk up to a scrappy little man leaning against the bar. You sit next to him, and he eyes you up and down. You return the stare absently. Lackadaisically, he strikes up a conversation.
 		"Good weather on %s these days, I hear." 
-		"I hear nothing but good things about %s." you reply, badly feigning interest. You order a drink, as he takes a gulp of his.
-		He looks at you, sizing you up. He probably has been waiting for someone to set next to him all day. "You look like a man in need of a couple spare credits. I have a, uhh, shipment that needs getting to %s. Are you interested? Thing is, its not exactly... legal. Pay is good though. All you need to know," he continues, "is that someone will be at the starport in %s waiting for this shipment. And they got credits. %s credits. Just for you, kiddo, if you want."
+		"I hear nothing but good things about %s," you reply, badly feigning interest. You order a drink as he takes a gulp of his.
+		He looks at you, sizing you up. He probably has been waiting for someone to sit next to him all day. "You look like a man in need of a couple spare credits. I have a, uhh, shipment that needs getting to %s. Are you interested? Thing is," here, he leans in close and you can smell the alcohol, heavy on his breath, "it's not exactly... legal. Pay is good though. All you need to know," he continues, "is that someone will be at the starport in %s waiting for this shipment. And they got credits. %s credits. Just for you, kiddo, if you want."
 		You get your drink, a greenish slimy-looking thing called a "tartar coobadu", and decide you just have to ask. "What exactly is this shipment?"]]
-bmsg[2] = [[He almost looks suprised at the question. He motions you to a corner table as if to tell you to go there, but forcifully leads you. People seem to be avoiding this table, probably because of a peculiar vomit-odor that is wafting from somewhere underneath. He sits you down rather roughly, and then sits down himself.
-		"Look, I really can't tell you the exact contents of the box. Lets just say its "small" weaponry. My... employer... isn't fond of the government of %s. As such, he needs... " he takes a drink "a shipment delivered there ASAP. Thats all I can tell you, I'm afraid"
+bmsg[2] = [[He almost looks suprised at the question. "Look, I really can't tell you the exact contents of the box. Lets just say its "small" weaponry. My... employer... isn't fond of the government of %s. As such, he needs... " he pauses to take a drink, slurping noisely, "a shipment delivered there A-S-A-P. Thats all I can tell you, I'm afraid"
 		You sip your slime, and answer him...]]
-bmsg[3] = [[You feel a very large hand slap you on the back. "Thats a lad!" he cries exuberantly. "I'll have my boys load up the cargo, as quickly as you please. Remember, all you gotta do is fly to %s, and avoid the military, police, and civvies that like to stick their noses where they don't belong. I'll let my contacts know to expect you, and to pay you when you land."
+bmsg[3] = [[You feel a very large hand slap you on the back. "That's a lad!" he cries exuberantly. "I'll have my boys load up the cargo, as quickly as you please. Remember, all you gotta do is fly to %s, and avoid the military, police, and civvies that like to stick their noses where they don't belong. I'd highly recommend not landing on any planets or stations or the like. I'll let my contacts know to expect you, and to pay you when you land."
 			You shake his sticky hand, and walk off, content that you've made an easy buck.]]
 
 --ending messages
 emsg = {}
-emsg[1] = [[As you descend to the %s spaceport, you notice a severe lack of... well... anybody. The place seems deserted. You received an impersonal message saying *LAND IN BAY 71A4* on your way into the atmosphere, but that is the only communication you received. You don't even see any vessels flying around. As you steer your ship into the aforementioned bay, you finally see a small group of gruff and wary men waiting for you. Almost as soon as you land, they have the goods out, and as you walk out to say hello, you already see it disappearing on the far end of the bay.]]
+emsg[1] = [[As you descend to the %s spaceport, you notice a severe lack of... well... anybody. The place seems deserted. You received an impersonal message saying "LAND IN BAY 71A4" on your way into the atmosphere, but that is the only communication you received. You don't even see any vessels flying around. As you steer your ship into the aforementioned bay, you finally see a small group of gruff and wary men waiting for you. Almost as soon as you land, they have the goods out, and as you walk out to say hello, you already see it disappearing on the far end of the bay.]]
 emsg[2] = [[You approach the man who appears to be the leader of the group. "One box of... stuff, as requested." You say, motioning to the now-gone box. 
 			The large, unshaven man looks you right in the eyes."Yes, thanks. I suppose you will be wanting payment now." He hands you a credit chip. "You know, we need to get a message back to our... employers. Interested in taking one more trip? If you are, I'll be in the bar after I've verified the contents of our shipment. Meet me there."]]
 
@@ -39,6 +38,16 @@ npc_name = "Ragnarok"
 bar_desc = "You see a rougher looking gent sitting at the bar, guzzling a brownish ale."
 misn_desc = "Deliver the shipment to %s in %s for the Nasin."
 misn_title = "The Gauntlet"
+
+
+--landing msgs
+lmsg = {}
+lmsg[1] = [[You land on the tarmac of the port, and are instantly surrounded by police. They storm the ship and haul you out onto the tarmac, throwing you down while they continue their search of your ship. An offical looking sort walks up to you and begins reading off of a device, "You are temporarily under confinement while we search your ship for contraband under article 4.7.2.13.A2 of the law. You are under suspicion of carrying contraband in the attempt of aiding terrorists." You guffaw, but continue watching.]]
+lmsg[2] = [[The police walk out, shaking their heads and motioning to the official. The official looks confused until one officer walks over and explains how they found nothing. The official nods and says "Our apologies. Please, have a nice day." You probably should be careful landing until that package gets delivered.]]
+lmsg[3] = [[You hear a couple cheers, followed shortly by your cargo doors slamming open. Several crates roll out, followed by grinning policeman. The official smiles as he looks down at you. "You are hereby fined 50,000 credits per crate, for a total of..." He pauses, making a show out of counting the rolling crates. "450,000 credits." He scribbles something out on a piece of holo paper, rips it off, and hands it to you before walking off. A ticket. On the bottom, the words are printed "THIS HAS ALREADY BEEN DEBITED FROM YOUR ACCOUNT. CONSIDER IT PAID IN FULL." Great. So much for an easy buck.]]
+
+
+
 
 function create()
    --this mission makes no mission claims
@@ -96,6 +105,21 @@ function land ()
       var.push("heretic_misn_tracker",1) --using "misn_tracker", as later on in-game, i plan on having multiple arcs to the ending.
       misn.osdDestroy()
       misn.finish( true )
+   else
+      tk.msg(misn_title,lmsg[1])
+      failchance = rnd.rnd(10)
+      if failchance > 7 then
+         tk.msg(misn_title,lmsg[3])
+         cmoney = player.credits()
+         if cmoney < 450000 then
+            cmoney = cmoney * -1
+            player.pay(cmoney)
+         else
+            player.pay(-450000)
+         end
+      else
+         tk.msg(misn_title,lmsg[2])
+      end
    end
 end
 
