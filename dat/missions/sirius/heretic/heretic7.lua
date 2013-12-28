@@ -17,7 +17,7 @@ misn_title = "The Thief"
 
 osd = {}
 osd[1] = [[Fly to %s.]] --targetsys
-osd[2] = [[Fly close to %s to scan it.]] --targetasset initially, will need to recreate OSD to accomodate new targets.
+osd[2] = [[Scan all targets in the %s system.]] --targetsys
 osd[3] = [[Return to %s in %s.]] --curasset,cursys
 
 
@@ -61,19 +61,46 @@ function accept ()
    misn.setTitle(misn_title)
    misn.setReward(misn_reward)
    misn.setDesc(misn_desc)
+   misn_stage = 0
 
    --need to do OSD.
 
    initingTheOsd()
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
+   hook.jump("jumper")
 
+end
+
+function jumper()
+   misn.osdActive(2)
+   if system.cur() == targetsys then
+      targs = {}
+      targs[1] = planet.pos(targetasset)
+      targs[2] = planet.pos(secasset)
+      targs[3] = jump.pos(jump.get("Palovi","Eiderdown"))
+      targs[4] = jump.pos(jump.get("Palovi","Duros"))
+      targs[5] = jump.pos(jump.get("Palovi","Tartan"))
+      hook.timer(1000,"patrolTime")
+      --do stuff -- use hook.timer
+      --if all completed, set "lokisgrace" to true
+   elseif system.cur() == cursys and lokisgrace == true then
+      --ending stuff.
+   end
+   
+end
+
+function patrolTime()
+   if misn_stage == 0 then
+      for i = 1, #targs, 1
+      sys.mrkAdd(targs[i])
+   end
 end
 
 function initingTheOsd()
    
    osd[1] = osd[1]:format(targetsys:name())
-   osd[2] = osd[2]:format(targetasset:name()) --will be updated with current objectives.
+   osd[2] = osd[2]:format(targetsys:name())
    osd[3] = osd[3]:format(curasset:name(),cursys:name())
 
 end
