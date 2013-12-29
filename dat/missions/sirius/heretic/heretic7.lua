@@ -19,7 +19,10 @@ osd = {}
 osd[1] = [[Fly to %s.]] --targetsys
 osd[2] = [[Scan all targets in the %s system.]] --targetsys
 osd[3] = [[Return to %s in %s.]] --curasset,cursys
-
+omsgmes = {}
+omsgmes[1] = [[Scan target for %d more seconds.]]
+omsgmes[2] = [[You've left too early! Please return.]]
+omsgmes[3] = [[Scan complete.]]
 
 function create ()
    targetasset,targetsys = planet.get("Aldarus")
@@ -74,15 +77,20 @@ end
 
 function jumper()
    misn.osdActive(2)
-   if system.cur() == targetsys then
+   if system.cur() == targetsys and firstjumpin == nil then
+      firstjumpin = true
       targs = {}
+      targst = {}
       targs[1] = planet.pos(targetasset)
       targs[2] = planet.pos(secasset)
       targs[3] = jump.pos(jump.get("Palovi","Eiderdown"))
       targs[4] = jump.pos(jump.get("Palovi","Duros"))
       targs[5] = jump.pos(jump.get("Palovi","Tartan"))
+      for i = 1, #targs, 1 do
+	 targsid[i] = sys.mrkAdd(targs[1])
+	 targst[i] = 0
+      end
       hook.timer(1000,"patrolTime")
-      --do stuff -- use hook.timer
       --if all completed, set "lokisgrace" to true
    elseif system.cur() == cursys and lokisgrace == true then
       --ending stuff.
@@ -91,11 +99,33 @@ function jumper()
 end
 
 function patrolTime()
-   if misn_stage == 0 then
-      for i = 1, #targs, 1
-      sys.mrkAdd(targs[i])
-   end
+   for i=1, #targs, 1 do
+      if vec2.dist(player.pos(),targs[i]) < 1000 then
+	 targst[i] = targst[i] + 1
+	 omsgmes[1] = omsgmes[1]:format(20 - targst[i])
+	 if omsgid == nil then
+	    omsgid = player.omsgAdd(omsgmes[1],5)
+	 else
+	    player.omsgChange(omsgid,omsgmes[1],5)
+	 end
+      elseif vec2.dist(player.pos(),targs[i]) > 1000 and targst[i] > 1 and targst[i] < 20 then
+	 player.omsgChange(omsgid,omsgmes[2]"You've left too early! Please return.")
+      elseif vec2.dist(player.pos(),targs[i]) < 1000 and targst[i] == 20 then
+	 --stuff to do when patrol point is complete.
+	 player.omsgChange(omsgid,omsgmes[3],5)
+	 system.mrkRm(targsid[i])
+	 table.remove(i, targs)
+	 table.remove(i, targsid)
+      else
+	 targst[i] = 0
+      end
+   end --this will time how long a player is within "1000" of the targ.
+   -- use player.omsgAdd(message,duration)
+   -- player.omsgChange(id,message,duration)
+   -- player.omsgRm(id)
 end
+
+
 
 function initingTheOsd()
    
