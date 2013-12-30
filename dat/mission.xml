@@ -863,6 +863,16 @@
    <planet>Atalanta</planet>
   </avail>
  </mission>
+ <mission name="The Thief">
+  <lua>sirius/heretic/heretic7</lua>
+  <flags />
+  <avail>
+   <cond>var.peek("heretic_misn_tracker") == 7</cond>
+   <chance>100</chance>
+   <location>Bar</location>
+   <planet>Obelisk Station</planet>
+  </avail>
+ </mission>
  <mission name="Anxious Merchant">
   <lua>trader/anxiousmerchant</lua>
   <avail>
