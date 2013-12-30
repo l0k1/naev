@@ -5,6 +5,7 @@
 --TODO:
 --Mark Nasin controlled systems via system.addMarker.
 --Let the playa know what these are via heretic5 ending dialogue.
+--Switch to unidiffs.
 
 enemy_fleet_dead = {
    "They had that coming! Way to take them out boys! Next round is on me!",
