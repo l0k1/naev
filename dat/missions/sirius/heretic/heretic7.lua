@@ -28,6 +28,7 @@ omsgmes[2] = [[You've left too early! Please return.]]
 omsgmes[3] = [[Scan complete.]]
 
 function create ()
+   --This mission attempts to claim the Palovi system.
    targetasset,targetsys = planet.get("Aldarus")
    secasset = planet.get("Solpere")
    curasset,cursys = planet.cur()
@@ -78,7 +79,7 @@ function accept ()
 
    misn.accept()  -- For missions from the Bar only.
    misn.setTitle(misn_title)
-   misn.setReward(misn_reward)
+   misn.setReward("Reward: " .. reward)
    misn.setDesc(misn_desc)
    misn_stage = 0
 
@@ -87,11 +88,14 @@ function accept ()
    initingTheOsd()
    misn.osdCreate(misn_title,osd)
    misn.osdActive(1)
-   hook.jump("jumper")
+
+   meetthemark = misn.markerAdd(targetsys,"plot")
+
+   hook.jumpin("jumper")
 
 end
 
-function jumper()
+function jumper ()
    misn.osdActive(2)
    if system.cur() == targetsys then
       firstjumpin = true
@@ -107,7 +111,7 @@ function jumper()
    
 end
 
-function patrolTime()
+function patrolTime ()
    for i=1, #targs, 1 do
       if vec2.dist(player.pos(),targs[i]) < 1000 then
 	 targst[i] = targst[i] + 1
@@ -131,11 +135,12 @@ function patrolTime()
    end --this will time how long a player is within "1000" of the targ.
    if totscleared >= needcleared then
       lokisgrace = true
+      misn.markerMove(meetthemark, cursys)
       misn.osdActive(3)
    end
 end
 
-function landed() --End of mission stuff.
+function landed () --End of mission stuff.
    if planet.cur() == curasset then
       tk.msg(misn_title, emsg[1])
       player.pay(reward)
@@ -145,11 +150,12 @@ function landed() --End of mission stuff.
       faction.modPlayer("Nasin",rep_to_add)
       var.push("heretic_system_state",3)
       var.push("heretic_misn_tracker",tracker)
+      misn.markerRm(meetthemark)
       misn.finish(true)
    end
 end
 
-function initingTheOsd()
+function initingTheOsd ()
    osd[1] = osd[1]:format(targetsys:name())
    osd[2] = osd[2]:format(targetsys:name())
    osd[3] = osd[3]:format(curasset:name(),cursys:name())
