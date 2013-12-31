@@ -244,19 +244,19 @@ function space_meeting()
       if current_time == nil then
 	 current_time = time.get()
       end
-      if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,150) and msg_1_check == nil then
+      if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,350) and msg_1_check == nil then
 	 good_fleet[1]:broadcast(brief[1],false)
          msg_1_check = 1
-      elseif time.get() >= current_time + time.create(0,0,151) and time.get() <= current_time + time.create(0,0,250) and msg_2_check == nil then
+      elseif time.get() >= current_time + time.create(0,0,351) and time.get() <= current_time + time.create(0,0,650) and msg_2_check == nil then
 	 good_fleet[1]:broadcast(brief[2],false)
          msg_2_check = 1
-      elseif time.get() >= current_time + time.create(0,0,251) and time.get() <= current_time + time.create(0,0,350) and msg_3_check == nil then
+      elseif time.get() >= current_time + time.create(0,0,651) and time.get() <= current_time + time.create(0,0,950) and msg_3_check == nil then
 	 good_fleet[1]:broadcast(brief[3],false)
 	 msg_3_check = 1
-      elseif time.get() >= current_time + time.create(0,0,351) and time.get() <= current_time + time.create(0,0,450) and msg_4_check == nil then
+      elseif time.get() >= current_time + time.create(0,0,951) and time.get() <= current_time + time.create(0,0,1250) and msg_4_check == nil then
 	 good_fleet[1]:broadcast(brief[4],false)
 	 msg_4_check = 1
-      elseif time.get() >= current_time + time.create(0,0,451) and time.get() <= current_time + time.create(0,0,550) and msg_5_check == nil then
+      elseif time.get() >= current_time + time.create(0,0,1251) and time.get() <= current_time + time.create(0,0,1550) and msg_5_check == nil then
          good_fleet[1]:broadcast(brief[5],false)
 	 msg_5_check = 1
          system.mrkRm(meeting_mark)
@@ -368,10 +368,12 @@ function death(deadpilot,killer)
    if misn_finish_check == nil then
       if faction_check == faction.get("Sirius") then
          deathcounter = deathcounter + 1
-	 chanceMsg = rnd.rnd(1,3)
-	 if killer:exists() and chanceMsg == 1 then
-	    selectMsg = rnd.rnd(1,10)
-	    killer:broadcast(kilb[selectMsg])
+	 chanceMsg = rnd.rnd(1,2)
+	 if killer ~= nil then
+	    if killer:exists() and chanceMsg == 1 then
+	       selectMsg = rnd.rnd(1,10)
+	       killer:broadcast(kilb[selectMsg])
+	    end
 	 end
       end
       if deathcounter == #enemy and reinforce_check == "check!" then
