@@ -547,7 +547,7 @@ function returning_time()
 
       ifm[5] = ifm[5]:format(targetasset:name())
       message_check = nil
-      for i,p in ipairs(friends) do
+      for i,p in ipairs(friend) do
 	 if p:exists() and message_check == nil then
 	    p:broadcast(ifm[5],true)
 	    message_check = "check!"
