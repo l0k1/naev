@@ -59,7 +59,7 @@ brief[5] = [[Let's do this!]]
 ifm = {}
 ifm[1] = [[7th fleet has arrived with their shuttles! Watch their backs too!]]
 ifm[2] = [[A Sirius response fleet has just jumped in. Watch yourself!]]
-ifm[3] = [[A shuttle just got destroyed! There are only %d left! Guard them with your life!]] --#shuts
+ifm[3] = [[A shuttle just got destroyed! Pay attention! Guard them with your life!]]
 ifm[4] = [[Some more Nasin backup just jumped in!]]
 ifm[5] = [[Great job guys! Lets head to %s to debrief!]]
 
@@ -187,7 +187,11 @@ function updatingTheOsd()
    misn.osdDestroy()
    creatingTheOsd()
    osd[3] = [[Take out the opposing Sirius fleet, while guarding the shuttles. There are %d out of %d shuttles left alive.]] --aliveshuts,#shuts
-   osd[3] = osd[3]:format(#shuts,#shuts)
+   if shuttles_killed == nil then
+      osd[3] = osd[3]:format(#shuts,#shuts)
+   else
+      osd[3] = osd[3]:format(#shuts-shuttles_killed,#shuts)
+   end
    misn.osdCreate(misn_title,osd)
    misn.osdActive(3)
 
@@ -271,7 +275,7 @@ function jumper()
 
       hook.timer(40000,"nasinBackup")
       hook.timer(115000,"siriusBackup")
-      hook.timer(140000,"nasinMoreBackup")
+--      hook.timer(140000,"nasinMoreBackup")
       hook.pilot(nil,"death","death")
       hook.pilot(nil,"land","ms_land")
    end
@@ -327,34 +331,34 @@ function nasinBackup()
 
 end
 
-function nasinMoreBackup()
+--function nasinMoreBackup()
 
    --Just to even the odds a little more.
 
    --initialize!
 
-   moreBackup = pilot.add("Nasin Med Defense Fleet",nil,meetsys)
+--   moreBackup = pilot.add("Nasin Med Defense Fleet",nil,meetsys)
   
    --set up correctly.
 
-   for i,p in ipairs(moreBackup) do
-      p:setNoJump(true)
-      p:setNoLand(true)
-      p:setVisible(true)
-      p:setFriendly(true)
-      table.insert(friend,p)
-   end
+--   for i,p in ipairs(moreBackup) do
+--      p:setNoJump(true)
+--      p:setNoLand(true)
+--      p:setVisible(true)
+--      p:setFriendly(true)
+--      table.insert(friend,p)
+--   end
 
    --Let the player know.
-   msg_check = nil
-   for i,p in ipairs(friend) do
-      if p:exists() and msg_check == nil then
-	 p:broadcast(ifm[4],true)
-	 msg_check = "check!"
-      end
-   end
+--   msg_check = nil
+--   for i,p in ipairs(friend) do
+--      if p:exists() and msg_check == nil then
+--	 p:broadcast(ifm[4],true)
+--	 msg_check = "check!"
+--      end
+--   end
 
-end
+--end
 
 function siriusBackup()
 
@@ -464,7 +468,7 @@ function death(deadpilot,killer)
    if faction_check == faction.get("Sirius") then
       deathcounter = deathcounter + 1
       chanceMsg = rnd.rnd(1,3)
-      if killer:exists() and chanceMsg == 1 then
+      if killer:exists() and chanceMsg == 1 and killer ~= pilot.player() then
 	 selectMsg = rnd.rnd(1,10)
 	 killer:broadcast(kilb[selectMsg])
       end
@@ -488,18 +492,16 @@ function death(deadpilot,killer)
          shuttles_killed = shuttles_killed + 1
 	 
 	 --We need to let the player know somehow.
-
-	 ifm[3] = ifm[3]:format(#shuts-shuttles_killed)
-	 msg_check = nil
+	 msgcheck = nil
 	 for i,p in ipairs(friend) do
-	    if p:exists() and msg_check == nil then
+	    if p:exists() and msgcheck == nil then
 	       p:broadcast(ifm[3],true)
-	       msg_check = "check!"
+	       msgcheck = "check!"
 	    end
 	 end
-	 
+ 
 	 --update the OSD
-	 updateTheOsd()
+	 updatingTheOsd()
       end
       
       --end the mission if all the shuttles are killed.
@@ -509,7 +511,6 @@ function death(deadpilot,killer)
 	 abort()
       end
    end
-
 end
 
 function ms_land(landingpilot)
