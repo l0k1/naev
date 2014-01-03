@@ -33,16 +33,6 @@ function create ()
    secasset = planet.get("Solpere")
    curasset,cursys = planet.cur()
 
-   targs = {}
-   targst = {}
-   targs[1] = planet.pos(targetasset)
-   targs[2] = planet.pos(secasset)
-   targs[3] = jump.pos(jump.get("Palovi","Eiderdown"))
-   targs[4] = jump.pos(jump.get("Palovi","Duros"))
-   targs[5] = jump.pos(jump.get("Palovi","Tartan"))
-   needcleared = #targs
-   totscleared = 0
-
    nasin_rep = faction.playerStanding("Nasin")
    reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
 
@@ -96,14 +86,27 @@ function accept ()
 end
 
 function jumper ()
-   misn.osdActive(2)
+   pilot.player():setInvincible() --debug
    if system.cur() == targetsys then
+      if firstjumpin == nil then
+         targs = {}
+         targst = {}
+         targsid = {}
+         targs[1] = planet.pos(targetasset)
+         targs[2] = planet.pos(secasset)
+         targs[3] = jump.pos(jump.get("Palovi","Eiderdown"))
+         targs[4] = jump.pos(jump.get("Palovi","Duros"))
+         targs[5] = jump.pos(jump.get("Palovi","Tartan"))
+         needcleared = #targs
+         totscleared = 0
+      end
+      misn.osdActive(2)
       firstjumpin = true
       for i = 1, #targs, 1 do
-	 targsid[i] = sys.mrkAdd(targs[1])
-	 targst[i] = 0
+	      targsid[i] = system.mrkAdd("Scan here", targs[i])
+	      targst[i] = 0
       end
-      hook.timer(1000,"patrolTime")
+      patrolTime()
       --if all completed, set "lokisgrace" to true
    elseif system.cur() == cursys and lokisgrace == true then
       hook.land("landed")--ending stuff.
@@ -112,25 +115,30 @@ function jumper ()
 end
 
 function patrolTime ()
-   for i=1, #targs, 1 do
-      if vec2.dist(player.pos(),targs[i]) < 1000 then
-	 targst[i] = targst[i] + 1
-	 omsgmes[1] = omsgmes[1]:format(20 - targst[i])
-	 if omsgid == nil then
-	    omsgid = player.omsgAdd(omsgmes[1],5)
-	 else
-	    player.omsgChange(omsgid,omsgmes[1],5)
-	 end
-      elseif vec2.dist(player.pos(),targs[i]) > 1000 and targst[i] > 1 and targst[i] < 20 then
-	 player.omsgChange(omsgid,omsgmes[2]"You've left too early! Please return.")
-      elseif vec2.dist(player.pos(),targs[i]) < 1000 and targst[i] == 20 then
-	 totscleared = totscleared + 1
-	 player.omsgChange(omsgid,omsgmes[3],5)
-	 system.mrkRm(targsid[i])
-	 table.remove(i, targs)
-	 table.remove(i, targsid)
+   timeattarget = 5
+   for i, v in ipairs(targs) do
+      if vec2.dist(player.pos(),v) < 1000 and targst[i] < timeattarget then
+      targst[i] = targst[i] + 1
+      ttrm = timeattarget - targst[i]
+      newomsgmes = omsgmes[1]:format(ttrm)
+         if omsgid == nil then
+            omsgid = player.omsgAdd(newomsgmes,5)
+         else
+            player.omsgChange(omsgid,newomsgmes,5)
+         end
+      elseif vec2.dist(player.pos(),v) > 1000 and targst[i] > 1 and targst[i] < timeattarget then
+         player.omsgChange(omsgid,omsgmes[2],5)
+         targst[i] = 0
+         omsgid = nil
+      elseif vec2.dist(player.pos(),v) < 1000 and targst[i] == timeattarget then
+         totscleared = totscleared + 1
+         player.omsgChange(omsgid,omsgmes[3],5)
+         omsgid = nil
+         system.mrkRm(targsid[i])
+         table.remove(targs, i)
+         table.remove(targsid, i)
       else
-	 targst[i] = 0
+         targst[i] = 0
       end
    end --this will time how long a player is within "1000" of the targ.
    if totscleared >= needcleared then
@@ -138,6 +146,7 @@ function patrolTime ()
       misn.markerMove(meetthemark, cursys)
       misn.osdActive(3)
    end
+   hook.timer(1000,"patrolTime")
 end
 
 function landed () --End of mission stuff.
