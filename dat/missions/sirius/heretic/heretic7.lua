@@ -86,7 +86,6 @@ function accept ()
 end
 
 function jumper ()
-   pilot.player():setInvincible() --debug
    if system.cur() == targetsys then
       if firstjumpin == nil then
          targs = {}
@@ -102,10 +101,11 @@ function jumper ()
       end
       misn.osdActive(2)
       firstjumpin = true
-      for i = 1, #targs, 1 do
-	      targsid[i] = system.mrkAdd("Scan here", targs[i])
+      for i, v in ipairs(targs) do
+	      targsid[i] = system.mrkAdd("Scan here", v)
 	      targst[i] = 0
       end
+      hook.pilot(nil,"death","deadman")
       patrolTime()
       --if all completed, set "lokisgrace" to true
    elseif system.cur() == cursys and lokisgrace == true then
@@ -116,21 +116,27 @@ end
 
 function patrolTime ()
    timeattarget = 5
+   distfromtarget = 500
    for i, v in ipairs(targs) do
-      if vec2.dist(player.pos(),v) < 1000 and targst[i] < timeattarget then
+      if vec2.dist(player.pos(),v) < distfromtarget and targst[i] < timeattarget then
       targst[i] = targst[i] + 1
-      ttrm = timeattarget - targst[i]
+      ttrm = timeattarget - targst[i] + 1
       newomsgmes = omsgmes[1]:format(ttrm)
          if omsgid == nil then
             omsgid = player.omsgAdd(newomsgmes,5)
          else
             player.omsgChange(omsgid,newomsgmes,5)
          end
-      elseif vec2.dist(player.pos(),v) > 1000 and targst[i] > 1 and targst[i] < timeattarget then
+      elseif vec2.dist(player.pos(),v) > distfromtarget and targst[i] > 1 and targst[i] < timeattarget then
          player.omsgChange(omsgid,omsgmes[2],5)
          targst[i] = 0
          omsgid = nil
-      elseif vec2.dist(player.pos(),v) < 1000 and targst[i] == timeattarget then
+         if ranaway == nil then --used for adding rep at the end of the mission.
+            ranaway = 1
+         else
+            ranaway = ranaway + 1
+         end
+      elseif vec2.dist(player.pos(),v) < distfromtarget and targst[i] == timeattarget then
          totscleared = totscleared + 1
          player.omsgChange(omsgid,omsgmes[3],5)
          omsgid = nil
@@ -140,7 +146,7 @@ function patrolTime ()
       else
          targst[i] = 0
       end
-   end --this will time how long a player is within "1000" of the targ.
+   end --this will time how long a player is within distfromtarget of the targ.
    if totscleared >= needcleared then
       lokisgrace = true
       misn.markerMove(meetthemark, cursys)
@@ -149,11 +155,24 @@ function patrolTime ()
    hook.timer(1000,"patrolTime")
 end
 
+function deadman (killer, deader) --used for adding rep at the end of the mission.
+   if deader:faction() == faction.get("Sirius") and killer == pilot.player() then
+      if totskilled == nil then
+         totskilled = 1
+      else
+         totskilled = totskilled + 1
+      end
+   end
+end
+
 function landed () --End of mission stuff.
    if planet.cur() == curasset then
       tk.msg(misn_title, emsg[1])
       player.pay(reward)
-      rep_to_add = 5
+      rep_to_add = 5 + (math.floor(totskilled / 2)) - (math.ceil(ranaway / 3))
+      if rep_to_add < 0 then
+         rep_to_add = 1
+      end
       tracker = var.peek("heretic_misn_tracker")
       tracker = tracker + 1
       faction.modPlayer("Nasin",rep_to_add)
