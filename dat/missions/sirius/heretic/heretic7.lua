@@ -53,6 +53,7 @@ function accept ()
    bmsg[2] = bmsg[2]:format(player.name())
    bmsg[4] = bmsg[4]:format(targetsys:name(),player.name())
    bmsg[5] = bmsg[5]:format(targetasset:name(),targetsys:name(),player.name())
+   misn_desc = misn_desc:format(targetasset:name())
    nasin_rep = faction.playerStanding("Nasin")
    reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
 

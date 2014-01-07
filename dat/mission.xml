@@ -861,13 +861,23 @@
    <chance>100</chance>
    <location>Bar</location>
    <planet>Atalanta</planet>
-  </avail>
+  </avail>      var.push("heretic_system_state",3)
  </mission>
  <mission name="The Thief">
   <lua>sirius/heretic/heretic7</lua>
   <flags />
   <avail>
    <cond>var.peek("heretic_misn_tracker") == 7</cond>
+   <chance>100</chance>
+   <location>Bar</location>
+   <planet>Obelisk Station</planet>
+  </avail>
+ </mission>
+ <mission>
+  <lua>sirius/heretic/heretic8</lua>
+  <flags />
+  <avail>
+   <cond>var.peek("heretic_misn_tracker") == 8</cond>
    <chance>100</chance>
    <location>Bar</location>
    <planet>Obelisk Station</planet>
