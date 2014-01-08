@@ -53,9 +53,11 @@ function accept ()
    bmsg[2] = bmsg[2]:format(player.name())
    bmsg[4] = bmsg[4]:format(targetsys:name(),player.name())
    bmsg[5] = bmsg[5]:format(targetasset:name(),targetsys:name(),player.name())
-   misn_desc = misn_desc:format(targetasset:name())
+   
+   misn_desc = misn_desc:format(targetsys:name())
    nasin_rep = faction.playerStanding("Nasin")
    reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
+   totskilled = 0
 
    --dialoge
    thechoice = tk.yesno(misn_title,bmsg[1])
@@ -87,6 +89,8 @@ function accept ()
 end
 
 function jumper ()
+   pilot.player():setInvincible()
+   print(totskilled)
    if system.cur() == targetsys then
       if firstjumpin == nil then
          targs = {}
@@ -156,7 +160,7 @@ function patrolTime ()
    hook.timer(1000,"patrolTime")
 end
 
-function deadman (killer, deader) --used for adding rep at the end of the mission.
+function deadman (deader,killer) --used for adding rep at the end of the mission.
    if deader:faction() == faction.get("Sirius") and killer == pilot.player() then
       if totskilled == nil then
          totskilled = 1
