@@ -942,4 +942,13 @@
    <pilot name="Nasin Marine Shuttle" ship="Rhino"></pilot>
   </pilots>
  </fleet>
+ <fleet name="Sirius Delegation">
+  <ai>sirius</ai>
+  <faction>Sirius</faction>
+  <pilots>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+  </pilots>
+ </fleet>
 </Fleets>

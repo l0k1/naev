@@ -873,7 +873,7 @@
    <planet>Obelisk Station</planet>
   </avail>
  </mission>
- <mission>
+ <mission name="The Tempest">
   <lua>sirius/heretic/heretic8</lua>
   <flags />
   <avail>

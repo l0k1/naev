@@ -207,20 +207,20 @@ function jumper()
       pilot.toggleSpawn("Sirius",false)
       if meetsys_runthrough == nil then
          meeting_mark = system.mrkAdd("Nasin Fleet",meetasset:pos())
-	 good_fleet = pilot.add("Nasin Assault Fleet",nil,meetasset:pos())
-	 shuts = pilot.add("Nasin Marine Shuttles",nil,meetasset:pos())
-	 for i,p in ipairs(shuts) do
-	    p:control(true)
-	    p:brake(true)
-	    p:setFriendly(true)
-	    p:setVisplayer(true)
-	 end
-	 for i,pil in ipairs(good_fleet) do
-	    pil:control(true)
-	    pil:brake(true)
-	    pil:setFriendly(true)
-	    pil:setVisplayer(true)
-	 end
+         good_fleet = pilot.add("Nasin Assault Fleet",nil,meetasset:pos())
+         shuts = pilot.add("Nasin Marine Shuttles",nil,meetasset:pos())
+         for i,p in ipairs(shuts) do
+            p:control(true)
+            p:brake(true)
+            p:setFriendly(true)
+            p:setVisplayer(true)
+         end
+         for i,pil in ipairs(good_fleet) do
+            pil:control(true)
+            pil:brake(true)
+            pil:setFriendly(true)
+            pil:setVisplayer(true)
+         end
       end
 
 --The hook.date() handles the actual meeting.
