@@ -39,8 +39,10 @@ function create ()
    --this mission attempts to claim the Palovi system.
    targetasset,targetsys = planet.get("Aldarus")
    secasset = planet.get("Solpere")
-   
-   --find the meetsys
+   meetsys = system.get("Tartan")
+      
+   bmsg[1] = bmsg[1]:format(targetsys:name(),targetsys:name())
+   emsg[1] = emsg[1]:format(targetsys:name())   --find the meetsys
    tDist = 200 --arbitrary large number.
    tJumps = targetsys:jumps(true)
    for i, j in ipairs(tJumps) do
@@ -50,9 +52,6 @@ function create ()
          tDist = syscheck
       end
    end
-   
-   bmsg[1] = bmsg[1]:format(targetsys:name(),targetsys:name())
-   emsg[1] = emsg[1]:format(targetsys:name())
    misn_desc = misn_desc:format(targetsys:name())
    
    --the first two variables are used in mission failure/success, whereas the third is a crude way to measure the player's effectiveness.
@@ -60,6 +59,7 @@ function create ()
    nasin_killed = 0
    player_killed = 0
    delegate_killed = 0
+   mf = {}
 
    --standard misn.claim.
    if not misn.claim(targetsys) then

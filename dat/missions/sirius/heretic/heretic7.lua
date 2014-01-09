@@ -89,7 +89,6 @@ function accept ()
 end
 
 function jumper ()
-   pilot.player():setInvincible()
    if system.cur() == targetsys then
       if firstjumpin == nil then
          targs = {}
