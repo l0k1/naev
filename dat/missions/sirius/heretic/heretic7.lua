@@ -90,7 +90,6 @@ end
 
 function jumper ()
    pilot.player():setInvincible()
-   print(totskilled)
    if system.cur() == targetsys then
       if firstjumpin == nil then
          targs = {}
@@ -136,11 +135,6 @@ function patrolTime ()
          player.omsgChange(omsgid,omsgmes[2],5)
          targst[i] = 0
          omsgid = nil
-         if ranaway == nil then --used for adding rep at the end of the mission.
-            ranaway = 1
-         else
-            ranaway = ranaway + 1
-         end
       elseif vec2.dist(player.pos(),v) < distfromtarget and targst[i] == timeattarget then
          totscleared = totscleared + 1
          player.omsgChange(omsgid,omsgmes[3],5)
@@ -174,7 +168,7 @@ function landed () --End of mission stuff.
    if planet.cur() == curasset then
       tk.msg(misn_title, emsg[1])
       player.pay(reward)
-      rep_to_add = 5 + (math.floor(totskilled / 2)) - (math.ceil(ranaway / 3))
+      rep_to_add = 4 + (math.floor(totskilled / 3))
       if rep_to_add < 0 then
          rep_to_add = 1
       end
