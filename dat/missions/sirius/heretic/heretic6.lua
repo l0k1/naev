@@ -412,7 +412,24 @@ function space_meeting()
 	 meetsys_runthrough = 1
          system.mrkRm(meeting_mark)
 	 misn.osdActive(2)
+    
+   max_speed = 10000
+   for i, p in ipairs(good_fleet) do
+      spe_check = pilot.stats(p)
+      if spe_check.speed_max < max_speed then
+         max_speed = spe_check.speed_max
+      end
+   end
+   for i, p in ipairs(shuts) do
+      spe_check = pilot.stats(p)
+      if spe_check.speed_max < max_speed then
+         max_speed = spe_check.speed_max
+      end
+   end
+   
+    
 	 for i,p in ipairs(good_fleet) do
+       p:setSpeedLimit(max_speed)
 	    if i == 1 or i == 2 or i == 3 then
 	       p:hyperspace(targetsys)
 	    elseif good_fleet[math.ceil(i/3)] ~= nil then
@@ -422,6 +439,7 @@ function space_meeting()
             end
 	 end
 	 for i,p in ipairs(shuts) do
+   p:setSpeedLimit(max_speed)
 	    if followCheck == nil then
 	       p:follow(good_fleet[1])
 	       followCheck = "following!"
