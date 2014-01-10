@@ -120,12 +120,11 @@ function jumper ()
       pilot.clear()
       pilot.toggleSpawn(false)
       misn_status = 2
-      updateOsd()
       def = {}
       as = {}
-      def[1] = pilot.add("Sirius Defense Fleet", nil, vec2.add(targetasset.pos(),rnd.rnd(-3500,3500),rnd.rnd(-3500,3500)))
-      def[2] = pilot.add("Sirius Defense Fleet", nil, vec2.add(secasset.pos(),rnd.rnd(-3500,3500),rnd.rnd(-3500,3500))) 
-      as[1] = pilot.add("Nasin Sml Attack Fleet", nil,meetsys)
+      def[1] = pilot.add("Sirius Defense Fleet", nil, vec2.add(targetasset:pos(),rnd.rnd(-3500,3500),rnd.rnd(-3500,3500)))
+      def[2] = pilot.add("Sirius Defense Fleet", nil, vec2.add(secasset:pos(),rnd.rnd(-3500,3500),rnd.rnd(-3500,3500))) 
+      as[1] = pilot.add("Nasin Sml Attack Fleet", nil, meetsys)
       as[2] = pilot.add("Nasin Assault Fleet", nil, meetsys)
       for i, p in ipairs(def) do
          for i1, p1 in ipairs(def[i]) do
@@ -146,9 +145,9 @@ function jumper ()
       updateOsd()
       hook.pilot("deadders",nil,"death")
       hook.land("lander")
-   elseif misn_status == 2 then
+   elseif system.cur() ~= targetsys and misn_status == 2 then
       tk.msg(misn_title, fail[1])
-      misn_finish(false)
+      misn.finish(false)
    end
 end
 
