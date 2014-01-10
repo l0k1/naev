@@ -40,37 +40,12 @@ function create ()
    targetasset,targetsys = planet.get("Aldarus")
    secasset = planet.get("Solpere")
    meetsys = system.get("Tartan")
-      
-   bmsg[1] = bmsg[1]:format(targetsys:name(),targetsys:name())
-   emsg[1] = emsg[1]:format(targetsys:name())   --find the meetsys
-   tDist = 200 --arbitrary large number.
-   tJumps = targetsys:jumps(true)
-   for i, j in ipairs(tJumps) do
-      sys_check = system.jumpDist(jump.dest(j))
-      if tDist > sys_check then
-         meetsys = jump.dest(j)
-         tDist = syscheck
-      end
-   end
-   misn_desc = misn_desc:format(targetsys:name())
    
-   --the first two variables are used in mission failure/success, whereas the third is a crude way to measure the player's effectiveness.
-   sirius_killed = 0
-   nasin_killed = 0
-   player_killed = 0
-   delegate_killed = 0
-   mf = {}
-
-   --standard misn.claim.
-   if not misn.claim(targetsys) then
+   
+   if not misn.claim(targetsys) and misn.claim(meetsys) then
       misn.finish(false)
    end
-
-   --get the nasin rep and calculate the reward.
-   nasin_rep = faction.playerStanding("Nasin")
-   reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
-
-
+   
    --open up the mission.
    misn.setNPC(npc_name,"neutral/thief1")
    misn.setDesc(bar_desc)
@@ -80,6 +55,15 @@ end
 
 function accept ()
    
+   bmsg[1] = bmsg[1]:format(targetsys:name(),targetsys:name())
+   emsg[1] = emsg[1]:format(targetsys:name())   --find the meetsys
+   
+   misn_desc = misn_desc:format(targetsys:name())
+
+   --get the nasin rep and calculate the reward.
+   nasin_rep = faction.playerStanding("Nasin")
+   reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
+   
    if not tk.yesno(misn_title,bmsg[1]) then
       misn.finish(false)
    end
@@ -88,9 +72,9 @@ function accept ()
    misn.setReward("Reward: " .. reward)
    misn.setDesc(misn_desc)
    
-   osd[1] = osd[1]:format(targetsys:name())
-   osd[2] = osd[2]:format(meetsys:name())
-   osd[3] = osd[3]:format(targetasset:name())
+   osd[1] = osd[1]:format(meetsys:name())
+   osd[2] = osd[2]:format(targetsys:name())
+   osd[4] = osd[4]:format(targetasset:name())
    
    meetthemark = misn.markerAdd(meetsys, "plot")
    misn.osdCreate(misn_title, osd)
@@ -106,20 +90,28 @@ function jumper ()
    
    if system.cur() == meetsys and misn_status == nil then
       
+      pilot.clear()
+      pilot.toggleSpawn("Sirius", false)
+      pilot.toggleSpawn("Pirate", false)
       --handles the in-space meeting.
-      
+      mf = {}
       --create the fleet at a semi-random vec2.
-      mf[1] = pilot.add("Nasin Sml Attack Fleet", nil, vec2.new(rnd.rnd(1500,2000),rnd.rnd(-100,100)))
-      mf[2] = pilot.add("Nasin Assault Fleet", nil, vec2.new(rnd.rnd(1750,2250),rnd.rnd(0,200)))
-      for i1, p1 in ipairs(mf) do
-         for i, p in ipairs(mf[i1]) do
-            p:control()
-            p:setFriendly(true)
+      mf[1] = pilot.add("Nasin Sml Attack Fleet", nil, vec2.new(0,0))
+      mf[2] = pilot.add("Nasin Assault Fleet", nil, vec2.new(0,0))
+      for k, v in ipairs(mf) do
+         for i,p in ipairs(mf[k]) do
+            p:control(true)
             p:brake(true)
+            p:setFriendly(true)
+            p:setVisplayer(true)
+            if p ~= mf[2][1] then
+               p:face(mf[2][1], true)
+            end
          end
       end
-      system.mrkAdd("Nasin Fleet", pilot.pos(mf[2][1]))
+      meeting_mark = system.mrkAdd("Nasin Fleet", mf[2][1]:pos())
       hook.date(time.create(0,0,100),"proximity",{location=mf[2][1]:pos(),radius=700,funcname="space_meeting"})
+      hook.pilot(nil,"jump","time_for_jump")
       
    elseif system.cur() == targetsys and misn_status == 1 then
       
@@ -179,14 +171,33 @@ function space_meeting()
          mf[2][1]:broadcast(brief[3],false)
          msg_3_check = 1
          system.mrkRm(meeting_mark)
+         
+         --commands for flight
+         
+         max_speed = 10000
+         for k, v in ipairs(mf) do
+            for i, p in ipairs(mf[k]) do
+               spe_check = pilot.stats(p)
+               if spe_check.speed_max < max_speed then
+                  max_speed = spe_check.speed_max
+               end
+            end
+         end
+         
          for i1, p1 in ipairs(mf) do
             for i, p in ipairs(mf[i1]) do
                if i == 1 or i == 2 or i == 3 then
+                  p:brake(false)
                   p:hyperspace(targetsys)
-               elseif good_fleet[math.ceil(i/3)] ~= nil then
-                     p:follow(mf[i1][math.ceil(i/3)])
+                  p:setSpeedLimit(max_speed)
+               elseif mf[i1][math.ceil(i/3)] ~= nil then
+                  p:brake(false)
+                  p:follow(mf[i1][math.ceil(i/3)])
+                  p:setSpeedLimit(max_speed)
                else
-                  p:follow(mf[i1][1])
+                  p:brake(false)
+                  p:follow(mf[2][1])
+                  p:setSpeedLimit(max_speed)
                end
             end
          end
@@ -200,7 +211,11 @@ end
 
 function deadders (deadpilot, killer)
    if deadpilot:faction("Sirius") then
-      sirius_killed = sirius_killed + 1
+      if sirius_killed == nil then
+         sirius_killed = 1
+      else
+         sirius_killed = sirius_killed + 1
+      end
       if sirius_killed >= #def[1]+#def[2] and misn_status == 2 then
          misn_status = 3
          tk.msg(misn_title, crisis[1])
@@ -209,10 +224,17 @@ function deadders (deadpilot, killer)
       updateOsd()
    end
    if killer == pilot.player() then
-      player_killed = player_killed + 1
+      if player_killed == nil then
+         player_killed = 1
+      else
+         player_killed = player_killed + 1
+      end
    end
    if misn_status == 3 then
       for i, p in ipairs(delegate) do
+         if delegate_killed == nil then
+            delegate_killed = 0
+         end
          if p == deadpilot and killer == pilot.player() then
             player_killed = player_killed + 4
             delegate_killed = delegate_killed + 1
@@ -259,6 +281,22 @@ function updateOsd ()
       misn.osdActive(misn_status)
    else
       misn.osdActive(misn_status+1)
+   end
+end
+
+function time_for_jump(p_jumper)
+
+   --After the "lead" ships in the meetsys have jumped, the remainder
+   --ships will then be told to jump.
+
+   if p_jumper == mf[2][1] or p_jumper == mf[2][2] or p_jumper == mf[2][3] then
+      for k, v in ipairs(mf) do
+         for i, p in ipairs(mf[k]) do
+            if p ~= p_jumper and p:exists() then
+               p:hyperspace(targetsys)
+            end
+         end
+      end
    end
 end
 

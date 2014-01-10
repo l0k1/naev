@@ -78,7 +78,6 @@ function create()
       system.get("Nixon"),
       system.get("Kiwi"),
       system.get("Pellmell"),
-      system.get("Tartan"),
       system.get("Kyo"),
       system.get("Scarlet"),
       system.get("Valur Gem"),
@@ -148,7 +147,7 @@ function systemControl()
       if system.cur() == sys then
 	 pilot.clear()
 	 pilot.toggleSpawn("Sirius",false)
-	 fleet_battle_roller = rnd.rnd(1,10)
+	 fleet_battle_roller = rnd.rnd(1,20)
 	 planets_in_sys = nil --cleaning up from prior systems.
 	 planets_in_sys = system.planets(system.cur())
 	 if planets_in_sys[1] ~= nil then
@@ -188,19 +187,19 @@ function systemControl()
 
 --Handles the regular systems where there isn't large fleet battles.
 
-	 else
-	    chance_civvies = rnd.rnd(1,3)
-	    chance_mil_small = rnd.rnd(1,7)
-	    chance_mil_large = rnd.rnd(1,3)
-	    for i = 1,chance_civvies do
-	       pilot.add("Nasin Sml Civilian",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
-	    end
-	    for i = 1,chance_mil_small do
-	       pilot.add("Nasin Med Defense Fleet",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
-	    end
-	    if chance_mil_large == 1 then
-	       pilot.add("Nasin Assault Fleet",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
-	    end
+--	 else
+--	    chance_civvies = rnd.rnd(1,3)
+--	    chance_mil_small = rnd.rnd(1,7)
+--	    chance_mil_large = rnd.rnd(1,3)
+--	    for i = 1,chance_civvies do
+--	       pilot.add("Nasin Sml Civilian",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
+--	    end
+--	    for i = 1,chance_mil_small do
+--	       pilot.add("Nasin Med Defense Fleet",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
+--	    end
+--	    if chance_mil_large == 1 then
+--	       pilot.add("Nasin Assault Fleet",nil,vec2.new(rnd.rnd(-10000,10000),rnd.rnd(-10000,10000)))
+--	    end
 	 end
       end
    end
@@ -229,7 +228,7 @@ function death(deadpilot)
    end
    if deadpilot:faction() == faction.get("Nasin") then
       dead_nasin = dead_nasin + 1
-      if dead_nasin % 5 == 0 then
+      if dead_nasin % 10 == 0 then
 	 for i = 1,3 do
 	    reinforce = pilot.add("Nasin Med Defense Fleet")
 	    for i,p in ipairs(reinforce) do
