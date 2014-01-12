@@ -438,18 +438,18 @@ function space_meeting()
 	       p:follow(good_fleet[1])
             end
 	 end
-	 for i,p in ipairs(shuts) do
-   p:setSpeedLimit(max_speed)
-	    if followCheck == nil then
-	       p:follow(good_fleet[1])
-	       followCheck = "following!"
-	    else
-	       p:follow(shuts[i-1])
-	    end
-	 end
-	 misn.markerMove(meetthemark,targetsys)
-	 sm_runthrough = 1
-      end
+	for i,p in ipairs(shuts) do
+      p:setSpeedLimit(max_speed)
+      if followCheck == nil then
+         p:follow(good_fleet[1])
+         followCheck = "following!"
+      else
+         p:follow(shuts[i-1])
+	   end
+	end
+	misn.markerMove(meetthemark,targetsys)
+	sm_runthrough = 1
+   end
    end
 end
 
