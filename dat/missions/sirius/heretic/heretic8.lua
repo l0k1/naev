@@ -16,6 +16,7 @@ fail[3] = "you landed too early, fool!"
 
 crisis = {}
 crisis[1] = [[We just received intel that the delegate ship is inbound. DESTROY.]]
+crisis[2] = [[All objectives complete. COME ON HOME BABY!]]
 
 osd = {}
 osd[1] = [[Meet up with 9th fleet in %s.]] --meetsys
@@ -38,6 +39,7 @@ misn_desc = "Obtain air superiority in %s, allowing a blockade of all Sirius tra
 targetasset,targetsys = planet.get("Aldarus")
 secasset = planet.get("Solpere")
 meetsys = system.get("Tartan")
+homeasset = planet.get("Obelisk Station")
 
 nasin_rep = faction.playerStanding("Nasin")
 reward = math.floor((10000+(math.random(5,8)*200)*(nasin_rep^1.315))*.01+.5)/.01
@@ -145,7 +147,7 @@ function jumper ()
       updateOsd()
       hook.pilot(nil, "death", "deadders")
       hook.land("lander")
-   elseif system.cur() ~= targetsys and misn_status == 2 then
+   elseif system.cur() ~= targetsys and misn_status == 2 or misn_status == 3 then
       tk.msg(misn_title, fail[1])
       misn.finish(false)
    end
@@ -243,6 +245,7 @@ function deadders (deadpilot, killer)
       end
       if delegate_killed == #delegate then --mission complete
          misn_status = 4
+         tk.msg(misn_title, crisis[2])
          updateOsd()
       end
    end
@@ -301,10 +304,10 @@ function time_for_jump(p_jumper)
 end
 
 function lander ()
-   if misn_status == 2 then
+   if misn_status == 2 or misn_status == 3 then
       tk.msg(misn_title, fail[3])
       misn_finish(false)
-   elseif misn_status == 3 and planet.cur(targetasset) then
+   elseif misn_status == 4 and planet.cur(homeasset) then
       tk.msg(misn_title, emsg[1])
       player.pay(reward)
       rep_to_add = 1 + (math.floor(player_killed / 4))

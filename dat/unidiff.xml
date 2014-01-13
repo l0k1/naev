@@ -73,4 +73,9 @@
    <jump target="Suna" type="exitonly">add</jump>
   </system>
  </unidiff>
+ <unidiff name="hereticdiff2">
+  <system name="Scarlet">
+   <asset name="Obelisk Station" faction="Nasin">faction</asset>
+  </system>
+ </unidiff>
 </unidiffs>
