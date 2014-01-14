@@ -174,7 +174,7 @@ function landed () --End of mission stuff.
       tracker = var.peek("heretic_misn_tracker")
       tracker = tracker + 1
       faction.modPlayer("Nasin",rep_to_add)
-      var.push("heretic_system_state",3)
+      diff.apply("hereticdiff4")
       var.push("heretic_misn_tracker",tracker)
       misn.markerRm(meetthemark)
       misn.finish(true)

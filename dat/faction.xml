@@ -345,9 +345,9 @@
   <enemies />
  </faction>
  <faction name="Nasin">
-  <invisible />
   <logo>sirius</logo>
   <standing>nasin</standing>
+  <colour>silver</colour>
   <allies />
   <player>0</player>
   <enemies>

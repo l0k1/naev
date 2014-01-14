@@ -318,6 +318,7 @@ function lander ()
       tracker = tracker + 1
       faction.modPlayer("Nasin",rep_to_add)
       var.push("heretic_misn_tracker",tracker)
+      diff.apply("hereticdiff5")
       misn.markerRm(meetthemark)
       misn.finish(true)
       --end mission stuff

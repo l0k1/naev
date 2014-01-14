@@ -74,8 +74,179 @@
   </system>
  </unidiff>
  <unidiff name="hereticdiff2">
-  <system name="Scarlet">
-   <asset name="Obelisk Station" faction="Nasin">faction</asset>
-  </system>
+   <!--Esker-->
+   <asset name="Fyruse Station">
+    <faction>Nasin</faction>
+   </asset>
+   <asset name="Madria"> 
+    <faction>Nasin</faction>
+   </asset>
+   <!--Gutter-->
+   <asset name="Hurne Station">
+    <faction>Nasin</faction>
+   </asset>
+   <asset name="Vennis">
+    <faction>Nasin</faction>
+   </asset>
+   <asset name="Janus Farming Station">
+    <faction>Nasin</faction>
+   </asset>
+   <!--Pike-->
+   <asset name="Coral Station">
+    <faction>Nasin</faction>
+   </asset>
+   <asset name="Ohon">
+    <faction>Nasin</faction>
+   </asset>
+   <!--Eye of Night-->
+   <asset name="Traal">
+    <faction>Nasin</faction>
+   </asset>
+   <asset name="Inios Station">
+    <faction>Nasin</faction>
+   </asset>
  </unidiff>
+ <unidiff name="hereticdiff3">
+  <!--Kraft-->
+  <asset name="Grindstone Shipyards">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Simoen">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Neon-->
+  <asset name="Passir">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Maatsu">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Umbrella Station">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Nixon-->
+  <asset name="Pauldur">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Kiwi-->
+  <asset name="Forbes Station">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Kyo-->
+  <asset name="Berkhere">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Worscha">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Scarlet-->
+  <asset name="Obelisk Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Burnan">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Druss-->
+  <asset name="Gath Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Samell">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Lora-Mor">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Rhu-->
+  <asset name="Orville Shipyard">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Hankies">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Mastadon Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Huan'xi">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Daal">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Ruutwi-->
+  <asset name="Arch Arai">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Niger-->
+  <asset name="Rionna">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Brandt Station">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Lazuli-->
+  <asset name="Chriik">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Anarbalis-->
+  <asset name="Freshwater Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Racheka">
+   <faction>Nasin</faction>
+  </asset>
+ </unidiff>
+ <unidiff name="hereticdiff4">
+  <!--Fulcrum-->
+  <asset name="Ferrungir">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Duros-->
+  <asset name="Trevis Station">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Modus Manis-->
+  <asset name="Modus">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Manis">
+   <faction>Nasin</faction>
+  </asset>
+  <!--An'ku-->
+  <asset name="Tankard Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Eenerim">
+   <faction>Nasin</faction>
+  </asset>
+ </unidiff>
+ <unidiff name="hereticdiff5">
+  <!--Palovi-->
+  <asset name="Aldarus">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Solpere">
+   <faction>Nasin</faction>
+  </asset>
+ <!--Gilligan's Memory-->
+  <asset name="Gilligan's Memory">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Monogram-->
+  <asset name="Oort Farming Station">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Saraab">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Wikon">
+   <faction>Nasin</faction>
+  </asset>
+  <!--Eiderdown-->
+  <asset name="Adrian">
+   <faction>Nasin</faction>
+  </asset>
+  <asset name="Ember">
+   <faction>Nasin</faction>
+  </asset>
+ </unidiff>  
 </unidiffs>

@@ -472,7 +472,7 @@ function land()
       tracker = var.peek("heretic_misn_tracker")
       tracker = tracker + 1
       faction.modPlayer("Nasin",rep_to_add)
-      var.push("heretic_system_state",1)
+      diff.apply("hereticdiff2")
       var.push("heretic_misn_tracker",tracker)
       misn.finish(true)
    elseif mission_status == 1 then
