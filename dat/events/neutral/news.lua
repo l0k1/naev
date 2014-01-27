@@ -37,6 +37,8 @@ else --default english
                                  }
    header_table["Thurion"] =     {"Data Relay Network"
                                  }
+   header_table["Nasin"] =       {"Free the mind, free the people."
+                                 }
    
    greet_table={}
 
@@ -72,6 +74,9 @@ else --default english
                                  }
    greet_table["Thurion"] =      {""
                                  }
+   greet_table["Nasin"] =        {""
+                                 }
+   
    
    articles={}
 

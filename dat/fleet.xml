@@ -852,18 +852,66 @@
    <pilot name="Sirius Fidelity" ship="Sirius Fidelity"></pilot>
   </pilots>
  </fleet>
- <fleet name="Nasin Sml Civilian">
-  <ai>nasin_civilian</ai>
+ <fleet name="Sirius Delegation">
+  <ai>sirius</ai>
+  <faction>Sirius</faction>
+  <pilots>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Lancelot">
+  <ai>baddie_norun</ai>
   <faction>Nasin</faction>
   <pilots>
-   <pilot name="Nasin Llama" ship="Llama"></pilot>
-   <pilot name="Nasin Llama" ship="Llama"></pilot>
-   <pilot name="Nasin Mule" ship="Mule"></pilot>
-   <pilot name="Nasin Mule" ship="Mule"></pilot>
+   <pilot name="Nasin Lancelot" ship="Lancelot"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Shark">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Shark" ship="Shark"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Admonisher">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Admonisher" ship="Admonisher"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Vendetta">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Vendetta" ship="Vendetta"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Pacifier">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Pacifier" ship="Pacifier"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Kestrel">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Kestrel" ship="Kestrel"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Nasin Hawking">
+  <ai>baddie_norun</ai>
+  <faction>Nasin</faction>
+  <pilots>
+   <pilot name="Nasin Hawking" ship="Hawking"></pilot>
   </pilots>
  </fleet>
  <fleet name="Nasin Sml Attack Fleet">
-  <ai>baddie</ai>
+  <ai>baddie_norun</ai>
   <faction>Nasin</faction>
   <pilots>
    <pilot name="Nasin Lancelot" ship="Lancelot"></pilot>
@@ -873,7 +921,7 @@
   </pilots>
  </fleet>
  <fleet name="Nasin Med Defense Fleet">
-  <ai>baddie</ai>
+  <ai>baddie_norun</ai>
   <faction>Nasin</faction>
   <pilots>
    <pilot name="Nasin Shark" ship="Shark"></pilot>
@@ -887,7 +935,7 @@
   </pilots>
  </fleet>
 <fleet name="Nasin Assault Fleet">
-  <ai>baddie</ai>
+  <ai>baddie_norun</ai>
   <faction>Nasin</faction>
   <pilots>
    <pilot name="Nasin Hawking" ship="Hawking"></pilot>
@@ -932,7 +980,7 @@
   </pilots>
  </fleet>
  <fleet name="Nasin Marine Shuttles">
-  <ai>baddie</ai>
+  <ai>baddie_norun</ai>
   <faction>Nasin</faction>
   <pilots>
    <pilot name="Nasin Marine Shuttle" ship="Rhino"></pilot>
@@ -940,15 +988,6 @@
    <pilot name="Nasin Marine Shuttle" ship="Rhino"></pilot>
    <pilot name="Nasin Marine Shuttle" ship="Rhino"></pilot>
    <pilot name="Nasin Marine Shuttle" ship="Rhino"></pilot>
-  </pilots>
- </fleet>
- <fleet name="Sirius Delegation">
-  <ai>sirius</ai>
-  <faction>Sirius</faction>
-  <pilots>
-   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
-   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
-   <pilot name="Sirius Delegate Ship" ship="Proteron Kahan"></pilot>
   </pilots>
  </fleet>
 </Fleets>

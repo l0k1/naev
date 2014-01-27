@@ -345,11 +345,14 @@
   <enemies />
  </faction>
  <faction name="Nasin">
+  <known />
   <logo>sirius</logo>
+  <player>0</player>
+  <spawn>nasin</spawn>
   <standing>nasin</standing>
+  <equip>nasin</equip>
   <colour>silver</colour>
   <allies />
-  <player>0</player>
   <enemies>
    <enemy>Sirius</enemy>
    <enemy>Pirate</enemy>
