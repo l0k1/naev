@@ -136,6 +136,7 @@ function takeoff() --for when the player takes off from the wringer.
       p:setNoLand()
       p:setHostile() --just in case. makes thing easier.
    end
+   Forma:new(sirius_be_serious, "cross")
    
    de_fence = pilot.add("Nasin Med Defense Fleet",nil,homeasset)
    de_fence_2 = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(rnd.rnd(25,75),rnd.rnd(100,350)))
@@ -153,6 +154,9 @@ function takeoff() --for when the player takes off from the wringer.
       p:setFriendly( true )
       hook.pilot(p,"death","death")
    end
+   Forma:new(de_fence, "vee")
+   Forma:new(de_fence_2, "buffer")
+   
    hook.timer(90000,"second_coming") --i wanted the player to feel some hope that he'd win, but have that hope come crashing down.
    hook.timer(97000,"second_coming")
    hook.timer(145000,"second_coming")
@@ -196,14 +200,15 @@ function out_sys_failure() --feel like jumping out? AWOL! its easier this way. t
 end
 
 function second_coming()
-   sirius_be_serious_2 = pilot.add("Sirius Assault Force",sirius,system.get("Herakin"))
-   for i,p in ipairs(sirius_be_serious_2) do
-      table.insert(sirius_be_serious,p) --inserting into the original table, for the death function.
+   local sbs = pilot.add("Sirius Assault Force",sirius,system.get("Herakin"))
+   for i,p in ipairs(sbs) do
       p:setHilight()
       p:setNoJump()
       p:setNoLand()
       p:setHostile(true)
    end
+   local p_forms = {"cross", "vee", "wedge", "buffer", "circle"}
+   Forma:new(sbs, p_forms[rnd.rnd(1, #p_forms)])
 end
 
 function return_to_base()

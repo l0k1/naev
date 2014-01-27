@@ -111,7 +111,6 @@ function takeoff()
 
    recon = pilot.add("Sirius Recon Force",nil,system.get("Herakin"))
    attackers = pilot.add("Nasin Sml Attack Fleet",nil,homeasset) --a little assistance
-   n_recon = #recon --using a deathcounter to track success
    for i,p in ipairs(recon) do
       p:setHilight(true)
       p:setNoJump(true) --dont want the enemy to jump or land, which might happen if the player is slow, or neutral to Sirius.
@@ -123,6 +122,8 @@ function takeoff()
       p:setNoLand(true)
       p:setFriendly(true)
    end
+   Forma:new(recon, "wedge")
+   Form:new(attackers, "vee")
    hook.pilot(nil,"death","death")
 end
 
@@ -132,7 +133,7 @@ function death(p)
          deathcount = deathcount + 1
       end
    end
-   if deathcount == n_recon then --checks if all the recon pilots are dead.
+   if deathcount == #recon then --checks if all the recon pilots are dead.
       misn.osdActive(2)
       finished = 1
    end

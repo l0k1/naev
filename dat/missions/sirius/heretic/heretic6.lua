@@ -186,11 +186,19 @@ function updatingTheOsd()
    
    misn.osdDestroy()
    creatingTheOsd()
+   if shuts == nil then
+      shuts = {}
+   end
+   if shutsBkup == nil then
+      shutsBkup = {}
+   end
+   n_shuts = #shuts + #shutsBkup
+   
    osd[3] = [[Take out the opposing Sirius fleet, while guarding the shuttles. There are %d out of %d shuttles left alive.]] --aliveshuts,#shuts
    if shuttles_killed == nil then
-      osd[3] = osd[3]:format(#shuts,#shuts)
+      osd[3] = osd[3]:format(n_shuts, n_shuts)
    else
-      osd[3] = osd[3]:format(#shuts-shuttles_killed,#shuts)
+      osd[3] = osd[3]:format(n_shuts-shuttles_killed,n_shuts)
    end
    misn.osdCreate(misn_title,osd)
    misn.osdActive(3)
@@ -209,28 +217,18 @@ function jumper()
          meeting_mark = system.mrkAdd("Nasin Fleet",meetasset:pos())
          good_fleet = pilot.add("Nasin Assault Fleet",nil,meetasset:pos())
          shuts = pilot.add("Nasin Marine Shuttles",nil,meetasset:pos())
-         for i,p in ipairs(shuts) do
-            p:control(true)
-            p:brake(true)
-            p:setFriendly(true)
-            p:setVisplayer(true)
-         end
-         for i,pil in ipairs(good_fleet) do
-            pil:control(true)
-            pil:brake(true)
-            pil:setFriendly(true)
-            pil:setVisplayer(true)
-         end
+         good_fleet = Forma:new(good_fleet)
+         shuts = Forma:new(shuts)
+         shuts.fleader:control()
+         shuts.fleader:brake()
+         good_fleet.fleader:control()
+         good_fleet.fleader:brake()
       end
 
 --The hook.date() handles the actual meeting.
 
       hook.date(time.create(0,0,100),"proximity",{location=meetasset:pos(),radius=700,funcname="space_meeting"})
 
---The hook.pilot() handles the excess ships that weren't given
---explicit instructions to jump.
-
-      hook.pilot(nil,"jump","time_for_jump")
    end
 
 --This block of code handles the actual assault in the target system.
@@ -242,7 +240,7 @@ function jumper()
       pilot.toggleSpawn("Sirius",false)
       pilot.toggleSpawn("Pirate",false)
       enemy = pilot.add("Sirius Defense Fleet",nil,(targetasset:pos()+sectarget:pos()/2))
-      enemy1 = pilot.add("Sirius Defense Fleet",nil,vec2.new(rnd.rnd(-1000,-8000),rnd.rnd(-1000,-8000)))
+      enemy1 = pilot.add("Sirius Defense Fleet",nil,(targetasset:pos()+sectarget:pos()/2))
  
       --Set up the OSD.
       updatingTheOsd()
@@ -256,6 +254,7 @@ function jumper()
          p:setVisible(true)
          p:setHostile(true)
       end
+      Forma:new(enemy, "vee")
 
       friend = pilot.add("Nasin Assault Fleet",nil,meetsys)
       shuts = pilot.add("Nasin Marine Shuttles",nil,meetsys)
@@ -266,15 +265,16 @@ function jumper()
          p:setFriendly(true)
       end
       for i,p in ipairs(shuts) do
-	 p:setVisible(true)
-	 p:control(true)
-	 p:land(targetasset)
-	 p:setFriendly(true)
-	 p:setHilight(true)
+         p:setVisible(true)
+         p:control(true)
+         p:land(targetasset)
+         p:setFriendly(true)
+         p:setHilight(true)
       end
+      Forma:new(friend, "buffer")
 
       hook.timer(40000,"nasinBackup")
-      hook.timer(115000,"siriusBackup")
+--      hook.timer(115000,"siriusBackup")
 --      hook.timer(140000,"nasinMoreBackup")
       hook.pilot(nil,"death","death")
       hook.pilot(nil,"land","ms_land")
@@ -304,7 +304,6 @@ function nasinBackup()
       p:setFriendly(true)
       p:setNoLand(true)
       p:setNoJump(true)
-      table.insert(friend,p)
    end
    for i,p in ipairs(shutsBkup) do
       p:control()
@@ -312,8 +311,9 @@ function nasinBackup()
       p:setFriendly(true)
       p:land(sectarget)
       p:setHilight(true)
-      table.insert(shuts,p)  
    end
+
+   Forma:new(friendBkup, "wedge")
 
    --Let the player know about this new development.
    
@@ -413,60 +413,19 @@ function space_meeting()
          system.mrkRm(meeting_mark)
 	 misn.osdActive(2)
     
-   max_speed = 10000
-   for i, p in ipairs(good_fleet) do
-      spe_check = pilot.stats(p)
-      if spe_check.speed_max < max_speed then
-         max_speed = spe_check.speed_max
-      end
-   end
-   for i, p in ipairs(shuts) do
-      spe_check = pilot.stats(p)
-      if spe_check.speed_max < max_speed then
-         max_speed = spe_check.speed_max
-      end
-   end
+   good_fleet.fleader:hyperspace(targetsys)
+   hook.pilot(good_fleet.fleader, "jump", "lead1_jumped")
    
-    
-	 for i,p in ipairs(good_fleet) do
-       p:setSpeedLimit(max_speed)
-	    if i == 1 or i == 2 or i == 3 then
-	       p:hyperspace(targetsys)
-	    elseif good_fleet[math.ceil(i/3)] ~= nil then
-               p:follow(good_fleet[math.ceil(i/3)])
-	    else
-	       p:follow(good_fleet[1])
-            end
-	 end
-	for i,p in ipairs(shuts) do
-      p:setSpeedLimit(max_speed)
-      if followCheck == nil then
-         p:follow(good_fleet[1])
-         followCheck = "following!"
-      else
-         p:follow(shuts[i-1])
-	   end
-	end
 	misn.markerMove(meetthemark,targetsys)
 	sm_runthrough = 1
    end
    end
 end
 
-function time_for_jump(p_jumper)
-
-   --After the "lead" ships in the meetsys have jumped, the remainder
-   --ships will then be told to jump.
-
-   if p_jumper == good_fleet[1] or p_jumper == good_fleet[2] or p_jumper == good_fleet[3] then
-      for i,p in ipairs(good_fleet) do
-         if p ~= p_jumper and p:exists() then
-	    p:hyperspace(targetsys)
-         end
-      end
-      for i,p in ipairs(shuts) do
-	 p:hyperspace(targetsys)
-      end
+function lead1_jumped()
+   good_fleet:disband()
+   for i, p in ipairs(good_fleet.fleet) do
+      p:hyperspace(targetsys)
    end
 end
 
@@ -496,38 +455,61 @@ function death(deadpilot,killer)
       returning_time()
    end
 
---This second part is for the shuttles.
+-----------------------This second part is for the shuttles.
 
    if shuts == nil then
       shuts = {}
+   end
+   
+   if shutsBkup == nil then
+      shutsBkup = {}
    end
 
    if shuttles_killed == nil then
       shuttles_killed = 0
    end
+   
    for i,p in ipairs(shuts) do
       if p == deadpilot then
          shuttles_killed = shuttles_killed + 1
 	 
-	 --We need to let the player know somehow.
-	 msgcheck = nil
-	 for i,p in ipairs(friend) do
-	    if p:exists() and msgcheck == nil then
-	       p:broadcast(ifm[3],true)
-	       msgcheck = "check!"
-	    end
-	 end
- 
-	 --update the OSD
-	 updatingTheOsd()
+   --We need to let the player know somehow.
+         msgcheck = nil
+         for i,p in ipairs(friend) do
+            if p:exists() and msgcheck == nil then
+               p:broadcast(ifm[3],true)
+               msgcheck = "check!"
+            end
+         end
+
+            --update the OSD
+         updatingTheOsd()
       end
+   end
+   
+   for i,p in ipairs(shutsBkup) do
+      if p == deadpilot then
+         shuttles_killed = shuttles_killed + 1
+	 
+   --We need to let the player know somehow.
+         msgcheck = nil
+         for i,p in ipairs(friend) do
+            if p:exists() and msgcheck == nil then
+                  p:broadcast(ifm[3],true)
+                  msgcheck = "check!"
+            end
+         end
+
+            --update the OSD
+         updatingTheOsd()
+      end
+   end
       
       --end the mission if all the shuttles are killed.
 
-      if shuttles_killed == #shuts then
-	 tk.msg(misn_title,shuttles_have_died)
-	 abort()
-      end
+   if shuttles_killed == #shuts + #shutsBkup then
+      tk.msg(misn_title,shuttles_have_died)
+      abort()
    end
 end
 
@@ -540,17 +522,17 @@ function ms_land(landingpilot)
    for i,p in ipairs(shuts) do
       if p == landingpilot then
          landing_check = landing_check + 1
-         if landing_check == #shuts - shuttles_killed then
+         if landing_check == #shuts + #shutsBkup - shuttles_killed then
             tk.msg(misn_title,shuttles_have_docked)
             all_shuttles_landed = 1
             returning_time()
 
-	    --need to update the OSD regarding all the shuttles landed.
-	    misn.osdDestroy()
-	    creatingTheOsd()
-	    osd[3] = [[Take out the opposing Sirius fleet. All remaining shuttles have landed.]]
-	    misn.osdCreate(misn_title,osd)
-	    misn.osdActive(3)
+            --need to update the OSD regarding all the shuttles landed.
+            misn.osdDestroy()
+            creatingTheOsd()
+            osd[3] = [[Take out the opposing Sirius fleet. All remaining shuttles have landed.]]
+            misn.osdCreate(misn_title,osd)
+            misn.osdActive(3)
          end
       end
    end
