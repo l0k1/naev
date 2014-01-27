@@ -2,6 +2,7 @@
 --[[blockade]]
 
 include "proximity.lua"
+include "fleet_form.lua"
 
 bmsg = {}
 bmsg[1] = [[Homons walks up to you. "SPACE SUPIERIOURITUY, BOOYAH." He high fives you and walks away, chanting, "%s". Apparently, you need to fly to %s. Are you in?]] --targetsys,targetsys
@@ -30,6 +31,8 @@ brief = {}
 brief[1] = "This is briefing 1!"
 brief[2] = "And this is briefing 2!"
 brief[3] = "BOOYAH."
+
+deljump = [[One of the delegate ships has jumped!]]
 
 npc_name = "Homons"
 bar_desc = "A very handsome man."
@@ -95,24 +98,21 @@ function jumper ()
       pilot.toggleSpawn("Pirate", false)
       --handles the in-space meeting.
       mf = {}
+      friend = {}
       --create the fleet at a semi-random vec2.
-      mf[1] = pilot.add("Nasin Med Defense Fleet", nil, vec2.new(0,0))
+      mf[1] = pilot.add("Nasin Assault Fleet", nil, vec2.new(0,0))
       mf[2] = pilot.add("Nasin Med Defense Fleet", nil, vec2.new(0,0))
-      mf[3] = pilot.add("Nasin Assault Fleet", nil, vec2.new(0,0))
+      mf[3] = pilot.add("Nasin Med Defense Fleet", nil, vec2.new(0,0))
       for _, v in ipairs(mf) do
          for _, p in ipairs(v) do
-            p:control(true)
-            p:brake(true)
-            p:setFriendly(true)
-            p:setVisplayer(true)
-            if p ~= mf[3][1] then
-               p:face(mf[3][1], true)
-            end
+            table.insert(friend, p)
          end
       end
-      meeting_mark = system.mrkAdd("Nasin Fleet", mf[3][1]:pos())
-      hook.date(time.create(0,0,100),"proximity",{location=mf[3][1]:pos(),radius=700,funcname="space_meeting"})
-      hook.pilot(nil,"jump","time_for_jump")
+      foo = Forma:new(friend, "buffer")
+      foo.fleader:control()
+      foo.fleader:brake()
+      meeting_mark = system.mrkAdd("Nasin Fleet", foo.fleader:pos())
+      hook.date(time.create(0,0,100),"proximity",{location=foo.fleader:pos(),radius=700,funcname="space_meeting"})
       
    elseif system.cur() == targetsys and misn_status == 1 then
       
@@ -129,6 +129,7 @@ function jumper ()
       as[2] = pilot.add("Nasin Assault Fleet", nil, meetsys)
       as[3] = pilot.add("Nasin Med Defense Fleet", nil, meetsys)
       for _, v in ipairs(def) do
+         Forma:new(v, "buffer")
          for _, p in ipairs(v) do
             p:setNoJump()
             p:setNoLand()
@@ -137,6 +138,7 @@ function jumper ()
          end
       end
       for _, v in ipairs(as) do
+         Forma:new(v, "buffer")
          for _, p in ipairs(v) do
             p:setNoJump()
             p:setNoLand()
@@ -163,45 +165,20 @@ function space_meeting()
          current_time = time.get()
       end
       if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,150) and msg_1_check == nil then
-         mf[3][1]:broadcast(brief[1],false)
+         foo.fleader:broadcast(brief[1],false)
          msg_1_check = 1
       elseif time.get() >= current_time + time.create(0,0,151) and time.get() <= current_time + time.create(0,0,250) and msg_2_check == nil then
-         mf[3][1]:broadcast(brief[2],false)
+         foo.fleader:broadcast(brief[2],false)
          msg_2_check = 1
       elseif time.get() >= current_time + time.create(0,0,251) and time.get() <= current_time + time.create(0,0,350) and msg_3_check == nil then
-         mf[3][1]:broadcast(brief[3],false)
+         foo.fleader:broadcast(brief[3],false)
          msg_3_check = 1
          system.mrkRm(meeting_mark)
          
          --commands for flight
          
-         max_speed = 10000
-         for _, v in ipairs(mf) do
-            for _, p in ipairs(v) do
-               spe_check = pilot.stats(p)
-               if spe_check.speed_max < max_speed then
-                  max_speed = spe_check.speed_max
-               end
-            end
-         end
-         
-         for _, v in ipairs(mf) do
-            for i, p in ipairs(v) do
-               if i == 1 or i == 2 or i == 3 then
-                  p:brake(false)
-                  p:hyperspace(targetsys)
-                  p:setSpeedLimit(max_speed)
-               elseif v[math.ceil(i/3)] ~= nil then
-                  p:brake(false)
-                  p:follow(v[math.ceil(i/3)])
-                  p:setSpeedLimit(max_speed)
-               else
-                  p:brake(false)
-                  p:follow(mf[3][1])
-                  p:setSpeedLimit(max_speed)
-               end
-            end
-         end
+         foo.fleader:hyperspace(targetsys)
+         hook.pilot(foo.fleader,"jump","time_for_jump")
          misn_status = 1
          updateOsd()
          misn.markerMove(meetthemark,targetsys)
@@ -243,7 +220,7 @@ function deadders (deadpilot, killer)
             delegate_killed = delegate_killed + 1
          end
       end
-      if delegate_killed == #delegate then --mission complete
+      if delegate_killed + delegate_jumped == #delegate then --mission complete
          misn_status = 4
          tk.msg(misn_title, crisis[2])
          updateOsd()
@@ -262,6 +239,34 @@ function phase2 ()
       p:setHilight(true)
       p:setVisible(true)
       p:hyperspace(meetsys,true)
+      hook.pilot(p,"jump","delegate_jump")
+   end
+end
+
+function delegate_jump()
+   local msg_check = false
+   for _, v in ipairs(as) do
+      for _, p in ipairs(v) do
+         if p:exists() then
+            p:broadcast(deljump)
+            msg_check = true
+         end
+         break
+      end
+      if msg_check = true then
+         break
+      end
+   end
+   player_killed = player_killed - 6
+   if delegate_jumped == nil then
+      delegate_jumped = 1
+   else
+      delegate_jumped = delegate_jumped + 1
+   end
+   if delegate_killed + delegate_jumped == #delegate then --mission complete
+      misn_status = 4
+      tk.msg(misn_title, crisis[2])
+      updateOsd()
    end
 end
 
@@ -291,14 +296,12 @@ function time_for_jump(p_jumper)
 
    --After the "lead" ships in the meetsys have jumped, the remainder
    --ships will then be told to jump.
-
-   if p_jumper == mf[2][1] or p_jumper == mf[2][2] or p_jumper == mf[2][3] then
-      for k, v in ipairs(mf) do
-         for i, p in ipairs(mf[k]) do
-            if p ~= p_jumper and p:exists() then
-               p:hyperspace(targetsys)
-            end
-         end
+   local fl = foo.fleet
+   foo:disband()
+   for i, p in ipairs(fl) do
+      if p:exists() then
+         p:control(true)
+         p:hyperspace(targetsys)
       end
    end
 end
