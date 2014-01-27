@@ -7,6 +7,8 @@
 --Let the playa know what these are via heretic5 ending dialogue.
 --Switch to unidiffs.
 
+include("fleet_form.lua")
+
 enemy_fleet_dead = {
 "They had that coming! Way to take them out boys! Next round is on me!",
 "HQ, this is Fleet Commander Shoto, and we have wiped out the Sirius threat!",
@@ -17,23 +19,27 @@ enemy_fleet_dead = {
 
 function create()
 
-
-   dead_nasin = 0
-   dead_sirius = 0
-
    if not evt.claim(system.cur()) then
       evt.finish()
    end
-
+   
+   local fleet_form_table = {"cross", "buffer", "vee", "wedge", "circle"}
+   
    --Handles the random, large fleet battles.
 
+   local fleet_battle_roller = rnd.rnd(1,7)
+
    if fleet_battle_roller == 1 then
+      pilot.toggleSpawn("Nasin", false)
+      pilot.toggleSpawn("Sirius", false)
+      pilot.toggleSpawn("Pirate", false)
+      pilot.clear()
       vectxe,vectye = rnd.rnd(-7500,7500),rnd.rnd(-7500,7500)
       vectxf,vectyf = rnd.rnd(-7500,7500),rnd.rnd(-7500,7500)
-      enemy = pilot.add("Sirius Defense Fleet",nil,vec2.new(vectxe,vectye))
-      enemy_bk = pilot.add("Sirius Assault Force",nil,vec2.new(vectxe - 1000,vectye - 1000))
-      friend = pilot.add("Nasin Assault Fleet",nil,vec2.new(vectxf,vectyf))
-      friend_bk = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(vectxf - 500,vectyf + 500))
+      local enemy = pilot.add("Sirius Defense Fleet",nil,vec2.new(vectxe,vectye)) --debug
+      local enemy_bk = pilot.add("Sirius Assault Force",nil,vec2.new(vectxe,vectye))
+      local friend = pilot.add("Nasin Assault Fleet",nil,vec2.new(vectxf,vectyf))
+      local friend_bk = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(vectxf,vectyf))
       for i,p in ipairs(enemy_bk) do
          table.insert(enemy,p)
       end
@@ -52,18 +58,23 @@ function create()
          p:setNoLand()
          p:setFriendly()
       end
-      hook.pilot(nil,"death","death")
-      hook.timer(300000, "reinforcements")
+      Forma:new(friend,fleet_form_table[rnd.rnd(1,#fleet_form_table)])
+      Forma:new(enemy,fleet_form_table[rnd.rnd(1,#fleet_form_table)])
+      hook.pilot(nil,"death","death",#enemy)
+      hook.timer(rnd.rnd(45000,300000), "reinforcements")
    end
    hook.jumpout("eventFinish")
+   hook.land("eventFinish")
 end
 
-function death(deadpilot)
+function death(deadpilot, _, num_enemy)
    --Moniters dead pilots for the end of the battle. And a little bit of flavaflav.
-
+   if dead_sirius == nil then
+      dead_sirius = 0
+   end
    if deadpilot:faction() == faction.get("Sirius") then
       dead_sirius = dead_sirius + 1
-      if dead_sirius == #enemy then
+      if dead_sirius == num_enemy then
          for i,p in ipairs(friend) do
             if p:exists() then
                p:setNoJump(false)
@@ -76,29 +87,24 @@ function death(deadpilot)
          end
       end
    end
-   if deadpilot:faction() == faction.get("Nasin") then
-      dead_nasin = dead_nasin + 1
-   end
 end
 
 function reinforcements()
-   for i = 1,3 do
-   reinforce = pilot.add("Nasin Med Defense Fleet")
-      for i,p in ipairs(reinforce) do
-      table.insert(friend,p)
+   local reinforce = pilot.add("Nasin Med Defense Fleet")
+   for i,p in ipairs(reinforce) do
       p:setVisible()
       p:setFriendly()
       p:setNoLand(true)
       p:setNoJump(true)
-      end
    end
-   hook.timer(rnd.rnd(15000,200000),"reinforcements")
+   Forma:new(reinforce)
+   hook.timer(rnd.rnd(45000,300000),"reinforcements")
 end
 
 function eventFinish()
 
 --Cleans up event proper-like.
 
-evt.finish()
+   evt.finish()
 
 end
