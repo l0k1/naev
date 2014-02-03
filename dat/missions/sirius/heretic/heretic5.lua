@@ -6,7 +6,8 @@ Jimmy Thomorr - A "recruiter" with the nasin, who is there to talk the player in
 Mase Attes - The players commander.
 Marton Heson - A pilot who flies with the player, and offers advice.]]
 
-include("proximity.lua")
+include "proximity.lua"
+include "fleet_form.lua"
 
 lang = naev.lang()
 misn_title = "The Shutdown"
@@ -170,31 +171,21 @@ function jumper()
       if meetsys_runthrough == nil then
          meetsys_runthrough = 1
          meeting_mark = system.mrkAdd("Nasin Fleet",vec2.new(-500,10000))
-	 good_fleet = pilot.add("Nasin Assault Fleet",nil,vec2.new(-500,10000))
-	 shuts = pilot.add("Nasin Marine Shuttles",nil,vec2.new(-1000,11000))
-	 awes = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(-1100,11100))
-	 for i,p in ipairs(awes) do
-	    table.insert(shuts,p)
-	 end
-	 for i,p in ipairs(shuts) do
-	    p:control()
-	    p:brake()
-	    p:setFriendly()
-	    p:setVisplayer(true)
-	 end
-	 for i,p in ipairs(good_fleet) do
-	    p:control()
-	    p:brake()
-	    p:setFriendly()
-	    p:setVisplayer(true)
-	 end
+         good_fleet = pilot.add("Nasin Assault Fleet",nil,vec2.new(-500,10000))
+         shuts = pilot.add("Nasin Marine Shuttles",nil,vec2.new(-1000,11000))
+         awes = pilot.add("Nasin Med Defense Fleet",nil,vec2.new(-1100,11100))
+         good_fleet = Forma:new(good_fleet)
+         shuts = Forma:new(shuts)
+         awes = Forma:new(awes)
+         
+         good_fleet.fleader:brake()
+         shuts.fleader:brake()
+         awes.fleader:brake()
 
-	 --The hook.date() handles the actual meeting.
-	 hook.date(time.create(0,0,100),"proximity",{location=vec2.new(-500,10000),radius=700,funcname="space_meeting"})
 
-	 --The hook.pilot() handles the excess ships that weren't given
-	 --explicit instructions to jump.
-	 hook.pilot(nil,"jump","time_for_jump")
+         --The hook.date() handles the actual meeting.
+         hook.date(time.create(0,0,100),"proximity",{location=vec2.new(-500,10000),radius=700,funcname="space_meeting"})
+
       end
    end
 
@@ -209,17 +200,15 @@ function jumper()
       num_enemy = #enemy
       friend = pilot.add("Nasin Assault Fleet",nil,meetsys)
       for i,p in ipairs(enemy) do
-         p:setNoLand()
-         p:setNoJump()
          p:setVisible(true)
          p:setHostile(true)
       end
       for i,p in ipairs(friend) do
          p:setVisible(true)
-         p:setNoLand()
-         p:setNoJump()
          p:setFriendly(true)
       end
+      enemy = Forma:new(enemy, "vee")
+      friend = Forma:new(friend, "cross")
       hook.timer(50000,"enter_shuttles")
       hook.timer(75000,"reinforcements")
       hook.pilot(nil,"death","death")
@@ -242,50 +231,45 @@ function space_meeting()
    
    if sm_runthrough == nil then
       if current_time == nil then
-	 current_time = time.get()
-      end
-      if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,350) and msg_1_check == nil then
-	 good_fleet[1]:broadcast(brief[1],false)
-         msg_1_check = 1
-      elseif time.get() >= current_time + time.create(0,0,351) and time.get() <= current_time + time.create(0,0,650) and msg_2_check == nil then
-	 good_fleet[1]:broadcast(brief[2],false)
-         msg_2_check = 1
-      elseif time.get() >= current_time + time.create(0,0,651) and time.get() <= current_time + time.create(0,0,950) and msg_3_check == nil then
-	 good_fleet[1]:broadcast(brief[3],false)
-	 msg_3_check = 1
-      elseif time.get() >= current_time + time.create(0,0,951) and time.get() <= current_time + time.create(0,0,1250) and msg_4_check == nil then
-	 good_fleet[1]:broadcast(brief[4],false)
-	 msg_4_check = 1
-      elseif time.get() >= current_time + time.create(0,0,1251) and time.get() <= current_time + time.create(0,0,1550) and msg_5_check == nil then
-         good_fleet[1]:broadcast(brief[5],false)
-	 msg_5_check = 1
-         system.mrkRm(meeting_mark)
-	 misn.osdActive(2)
-	 for i,p in ipairs(good_fleet) do
-	    if i == 1 or i == 2 or i == 3 then
-	       p:hyperspace(targetsys)
-	    elseif good_fleet[math.ceil(i/3)] ~= nil then
-               p:follow(good_fleet[math.ceil(i/3)])
-	    else
-	       p:follow(good_fleet[1])
-            end
-	 end
-	 misn.markerMove(meetthemark,targetsys)
-	 sm_runthrough = 1
+      current_time = time.get()
+   end
+   if time.get() >= current_time + time.create(0,0,51) and time.get() <= current_time + time.create(0,0,350) and msg_1_check == nil then
+      good_fleet[1]:broadcast(brief[1],false)
+      msg_1_check = 1
+   elseif time.get() >= current_time + time.create(0,0,351) and time.get() <= current_time + time.create(0,0,650) and msg_2_check == nil then
+      good_fleet[1]:broadcast(brief[2],false)
+      msg_2_check = 1
+   elseif time.get() >= current_time + time.create(0,0,651) and time.get() <= current_time + time.create(0,0,950) and msg_3_check == nil then
+      good_fleet[1]:broadcast(brief[3],false)
+      msg_3_check = 1
+   elseif time.get() >= current_time + time.create(0,0,951) and time.get() <= current_time + time.create(0,0,1250) and msg_4_check == nil then
+      good_fleet[1]:broadcast(brief[4],false)
+      msg_4_check = 1
+   elseif time.get() >= current_time + time.create(0,0,1251) and time.get() <= current_time + time.create(0,0,1550) and msg_5_check == nil then
+      good_fleet[1]:broadcast(brief[5],false)
+      msg_5_check = 1
+      system.mrkRm(meeting_mark)
+      misn.osdActive(2)
+      good_fleet.fleader:hyperspace(targetsys)
+      awes.fleader:hyperspace(targetsys)
+      hook.pilot(good_fleet.fleader,"jump","time_for_jump", good_fleet)
+      hook.pilot(awes.fleader,"jump","time_for_jump", awes)
+      misn.markerMove(meetthemark,targetsys)
+      sm_runthrough = 1
       end
    end
 end
 
-function time_for_jump(p_jumper)
+function time_for_jump(p_jumper, fle)
 
---After the "lead" ships in the meetsys have jumped, the remainder of the
---ships will then be told to jump.
-
-   if p_jumper == good_fleet[1] or p_jumper == good_fleet[2] or p_jumper == good_fleet[3] then
-      for i,p in ipairs(good_fleet) do
-         if p ~= p_jumper and p:exists() then
-	    p:hyperspace(targetsys)
-         end
+   --After the "lead" ships in the meetsys have jumped, the remainder
+   --ships will then be told to jump.
+   fl = fle.fleet
+   fle:disband()
+   for i, p in ipairs(fl) do
+      if p:exists() then
+         p:control(true)
+         p:hyperspace(targetsys)
       end
    end
 end
@@ -333,19 +317,20 @@ function reinforcements()
    enemy2 = pilot.add("Sirius Med Patrol",nil,system.get("Gutter"))
    enemy3 = pilot.add("Sirius Recon Force",nil,system.get("Gutter"))
    for i,p in ipairs(enemy2) do
-      table.insert(enemy,p)
       p:setNoLand()
       p:setNoJump()
       p:setHostile()
       p:setVisible(true)
    end
    for i,p in ipairs(enemy3) do
-      table.insert(enemy,p)
       p:setNoLand()
       p:setNoJump()
       p:setHostile()
       p:setVisible(true)
    end
+   
+   Forma:new(enemy2, "wedge")
+   Forma:new(enemy3)
 
    --This bit has a friendly member of the players fleet broadcast a warning.
 

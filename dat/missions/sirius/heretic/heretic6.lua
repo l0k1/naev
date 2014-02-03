@@ -1,7 +1,8 @@
 --[[misn title - the aggressor]]
 --[[this mission is much like its predecessor, the showdown, in that it involves a conflict between the nasin navy and the sirius navy. the nasin are trying to take another asset, and the sirius are trying to stop them. because one large fleet battle is never enough. the nasin, in the prior episode, had several military actions happening simultaneously. the player participated in one of these actions. in this one, more pushes are being made, and the sirius are being driven back even more.]]
 
-include("proximity.lua")
+include "proximity.lua"
+include "fleet_form.lua"
 
 lang = naev.lang()
 misn_title = [[The Aggressor]]
