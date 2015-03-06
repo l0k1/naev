@@ -253,7 +253,7 @@ function delegate_jump()
          end
          break
       end
-      if msg_check = true then
+      if msg_check == true then
          break
       end
    end
