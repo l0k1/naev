@@ -18,7 +18,7 @@ else -- default english
     
     title[1] = "Trouble is Coming"
     
-    text[1] = [[    "Bad news %s somehow the Dvaered figured out the location of our secret base.  They are already on their way there with a task force large enough to take out our base.  We are already preparing our base defenses, but we could use some additional help.  Are you interested?"]]
+    text[1] = [[    "Bad news, %s: the Dvaered figured out the location of our secret base.  They are already on their way there with a task force large enough to take out our base.  We are already preparing our base defenses, but we could use some additional help.  Are you interested?"]]
     
     title[2] = "Head to %s"
     text[2] = [[    "Great, get your best ship and biggest guns and head over to %s."]]
@@ -31,7 +31,7 @@ else -- default english
     
     title[4] = "Congratulations"
     text[5] = [[    When you step out of your ship, you can see everyone already celebrating the great victory.  Corporal Benito comes up to you and presses a credit chip into your hand.
-    "Its not much, but we couldn't have won without your help."]]
+    "It's not much, but we couldn't have won without your help."]]
     
     refusetitle = "Refusal"
     refusetext = [[    "I can understand why you wouldn't want to face the Dvaered.  We have sent out some forces to launch diversionary attacks in Dvaered space which may force them to pull back their strike force."]]
@@ -231,8 +231,8 @@ function spawnDV()
     obstinate:setVisible()
     obstinate:rmOutfit("all")
     obstinate:addOutfit("Engine Reroute")
-    obstinate:addOutfit("Shield Booster")
-    obstinate:addOutfit("Shield Booster")
+    obstinate:addOutfit("Medium Shield Booster")
+    obstinate:addOutfit("Medium Shield Booster")
     hook.pilot(obstinate, "attacked", "attackedObstinate")
     hook.pilot(obstinate, "death", "deathObstinate")
     hook.pilot(obstinate, "idle", "idle")

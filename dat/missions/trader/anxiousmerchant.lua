@@ -11,8 +11,8 @@
 
 ]]--
 
-include "cargo_common.lua"
-include "numstring.lua"
+include "dat/scripts/cargo_common.lua"
+include "dat/scripts/numstring.lua"
 
 lang = naev.lang()
 if lang == "es" then
@@ -108,8 +108,17 @@ function create()
    stu_jumps = 10300 * num_jumps
    stu_takeoff = 10300
    time_limit = time.get() + time.create(0, 0, stu_distance + stu_jumps + stu_takeoff)
+
+    -- Allow extra time for refuelling stops.
+    local jumpsperstop = 3 + math.min(tier, 3)
+    if num_jumps > jumpsperstop then
+        time_limit:add(time.create( 0, 0, math.floor((numjumps-1) / jumpsperstop) * stu_jumps ))
+    end
+
    payment = stu_distance + (stu_jumps / 10)
-   cargo_size = tier^3
+
+   -- Range of 5-10 tons for tier 0, 21-58 for tier 4.
+   cargo_size = rnd.rnd( 5 + 4 * tier, 10 + 12 * tier )
 end
 
 function accept()
@@ -124,7 +133,7 @@ function accept()
    local player_best = cargoGetTransit(time_limit, num_jumps, travel_dist)
    pilot.cargoRm(player.pilot(), cargo, cargo_size)
    if time_limit < player_best then
-      if not tk.yesno(slow_title, slow_text:format((time_limit - time.get()):str(), player_best:str(), destplanet:name())) then
+      if not tk.yesno(slow_title, slow_text:format((time_limit - time.get()):str(), (player_best - time.get()):str(), dest_planet:name())) then
          misn.finish()
       end
    end
@@ -182,7 +191,7 @@ end
 
 function abort()
    misn.cargoRm(cargo_ID)
-   player.msg(jet_msg)
+   player.msg(jet_msg:format(cargo))
    faction:modPlayerSingle(-5)
    misn.osdDestroy(osd)
    misn.markerRm(marker)

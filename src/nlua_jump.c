@@ -18,6 +18,7 @@
 #include "nluadef.h"
 #include "nlua_vec2.h"
 #include "nlua_system.h"
+#include "land_outfits.h"
 #include "log.h"
 
 
@@ -28,6 +29,7 @@ static JumpPoint* luaL_validjumpSystem( lua_State *L, int ind, int *offset, Star
 static int jumpL_get( lua_State *L );
 static int jumpL_eq( lua_State *L );
 static int jumpL_position( lua_State *L );
+static int jumpL_angle( lua_State *L );
 static int jumpL_hidden( lua_State *L );
 static int jumpL_exitonly( lua_State *L );
 static int jumpL_system( lua_State *L );
@@ -38,6 +40,7 @@ static const luaL_reg jump_methods[] = {
    { "get", jumpL_get },
    { "__eq", jumpL_eq },
    { "pos", jumpL_position },
+   { "angle", jumpL_angle },
    { "hidden", jumpL_hidden },
    { "exitonly", jumpL_exitonly },
    { "system", jumpL_system },
@@ -50,6 +53,7 @@ static const luaL_reg jump_cond_methods[] = {
    { "get", jumpL_get },
    { "__eq", jumpL_eq },
    { "pos", jumpL_position },
+   { "angle", jumpL_angle },
    { "hidden", jumpL_hidden },
    { "exitonly", jumpL_exitonly },
    { "system", jumpL_system },
@@ -339,6 +343,24 @@ static int jumpL_position( lua_State *L )
 
 
 /**
+ * @brief Gets the angle of a jump in degrees.
+ *
+ * @usage v = j:angle()
+ *    @luaparam j Jump to get the angle of.
+ *    @luareturn The angle.
+ * @luafunc angle( j )
+ */
+static int jumpL_angle( lua_State *L )
+{
+   JumpPoint *jp;
+
+   jp = luaL_validjump(L,1);
+   lua_pushnumber(L, jp->angle * 180. / M_PI);
+   return 1;
+}
+
+
+/**
  * @brief Checks whether a jump is hidden.
  *
  * @usage if not j:hidden() then -- Exclude hidden jumps.
@@ -440,20 +462,27 @@ static int jumpL_isKnown( lua_State *L )
  */
 static int jumpL_setKnown( lua_State *L )
 {
-   int b, offset;
+   int b, offset, changed;
    JumpPoint *jp;
 
    jp = luaL_validjumpSystem(L, 1, &offset, NULL);
 
-   /* True is boolean isn't supplied. */
-   if (lua_gettop(L) > offset )
+   /* True if boolean isn't supplied. */
+   if (lua_gettop(L) > offset)
       b  = lua_toboolean(L, 1 + offset);
    else
       b = 1;
+
+   changed = (b != (int)jp_isKnown(jp));
 
    if (b)
       jp_setFlag( jp, JP_KNOWN );
    else
       jp_rmFlag( jp, JP_KNOWN );
+
+   /* Update outfits image array. */
+   if (changed)
+      outfits_updateEquipmentOutfits();
+
    return 0;
 }
