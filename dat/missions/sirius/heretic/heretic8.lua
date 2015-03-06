@@ -257,7 +257,7 @@ function delegate_jump()
          break
       end
    end
-   player_killed = player_killed - 6
+   player_killed == player_killed - 6
    if delegate_jumped == nil then
       delegate_jumped = 1
    else
