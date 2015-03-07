@@ -5,10 +5,10 @@ include "proximity.lua"
 include "fleet_form.lua"
 
 bmsg = {}
-bmsg[1] = [[Homons walks up to you. "SPACE SUPIERIOURITUY, BOOYAH." He high fives you and walks away, chanting, "%s". Apparently, you need to fly to %s. Are you in?]] --targetsys,targetsys
+bmsg[1] = [[Homons walks up to you. "Good job scouting that %s. Now it's time for the fleet to move in. We need to wipe out the Sirius, and prevent those delegates from getting through. Are you ready to ride?"]] --targetsys,targetsys
 
 emsg = {}
-emsg[1] = [[You land on %s, lost and exhausted. WOO. Time to get back in the air!]]
+emsg[1] = [[You land on %s and can barely make it out of your ship before Homons walks up to you and slaps you on the back. "That was a ride, wasn't it! When you're ready for your next mission, you can find me sipping something good in the bar."]]
 
 fail = {}
 fail[1] = "you jumped out of the system, fool!"
@@ -28,9 +28,9 @@ osd_new = [[Destroy all Sirius ships. There are %d remaining.]]
 osd_crisis = [[Destroy the delegate ship and its escorts.]]
 
 brief = {}
-brief[1] = "This is briefing 1!"
-brief[2] = "And this is briefing 2!"
-brief[3] = "BOOYAH."
+brief[1] = "Let's show them what we are made of!"
+brief[2] = "Follow my lead, and don't let the delegates through!"
+brief[3] = "Rock 'n' roll!"
 
 deljump = [[One of the delegate ships has jumped!]]
 
@@ -64,7 +64,7 @@ end
 
 function accept ()
    
-   bmsg[1] = bmsg[1]:format(targetsys:name(),targetsys:name())
+   bmsg[1] = bmsg[1]:format(targetsys:name())
    emsg[1] = emsg[1]:format(targetsys:name())   --find the meetsys
    
    misn_desc = misn_desc:format(targetsys:name())
