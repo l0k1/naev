@@ -134,12 +134,23 @@ end
 function Forma:jumper(jumper)
    if jumper == self.fleader then
       self:dead(jumper) -- Jumping out is the same as dying, for our purpose; we need to not run this before the if statement.
+     closeJumpBool = false 
       for _, p in ipairs(self.fleet) do
-         p:control() -- control pilots or clear their orders.
-         p:hyperspace() -- TODO: make them use the same jump point as the leader. We can't easily fetch the destination (not if the AI decided to jump on its own),
-                        -- but we can check which jump point is closest, which should work most of the time. Don't feel like adding this right now. </lazy>
-                        -- Suffice to say though that the same method I used for getting the fleet's maximum speed applies.
+         
+         --find the closest jump point, and make the whole fleet use that jump.
+         if closeJumpBool == false then
+            for _, j in ipairs(system.cur():jumps()) do
+               if closeJump == nil then
+                  closeJump = j
+               elseif p:pos():dist(closeJump:pos()) > p:pos():dist(j:pos()) then
+                  closeJump = j
+               end
+            end
+            closeJumpBool = true
+         end
          p:setSpeedLimit(0)
+         p:control() -- control pilots or clear their orders.
+         p:hyperspace(closeJump:dest())
       end
 
       -- Stop the control loop, or it will override our hyperspace() order.
@@ -156,9 +167,23 @@ end
 function Forma:lander(lander)
    if lander == self.fleader then
       self:dead(lander) -- Landing is the same as dying, for our purpose.
-      for _, p in self.fleet do
+      closeAssetBool = false
+      for _, p in ipairs(self.fleet) do
+         
+         --find the closest asset and have the fleet land on it.
+         if closeAssetBool == false then
+            for _, a in ipairs(system.cur():planets()) do
+               if closeAsset == nil then
+                  closeAsset = a
+               elseif p:pos():dist(closeAsset:pos()) > p:pos():dist(a:pos()) then
+                  closeAsset = a
+               end
+            end
+         closeAssetBool = true
+         end
+      
          p:control() -- control pilots or clear their orders.
-         p:land() -- TODO: make them use the same asset as the leader.
+         p:land(closeAsset) -- TODO: make them use the same asset as the leader.
          p:setSpeedLimit(0)
       end
 
