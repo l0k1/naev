@@ -124,8 +124,8 @@ function Forma:shipCount()
          self.class_count[classy] = self.class_count[classy] + 1
       end
    end
-   for i,p in pairs(self.class_count) do
-   end
+   --for i,p in pairs(self.class_count) do
+   --end
 end
    
 
@@ -133,18 +133,21 @@ end
 -- Takes an ID that tells this function which formation the pilot belonged to.
 function Forma:jumper(jumper)
    if jumper == self.fleader then
-      dead(jumper) -- Jumping out is the same as dying, for our purpose.
-      for _, p in self.fleet do
+      self:dead(jumper) -- Jumping out is the same as dying, for our purpose; we need to not run this before the if statement.
+      for _, p in ipairs(self.fleet) do
          p:control() -- control pilots or clear their orders.
          p:hyperspace() -- TODO: make them use the same jump point as the leader. We can't easily fetch the destination (not if the AI decided to jump on its own),
                         -- but we can check which jump point is closest, which should work most of the time. Don't feel like adding this right now. </lazy>
                         -- Suffice to say though that the same method I used for getting the fleet's maximum speed applies.
+         p:setSpeedLimit(0)
       end
 
       -- Stop the control loop, or it will override our hyperspace() order.
       if self.thook then
          hook.rm(self.thook)
       end
+   else
+      self:dead(jumper) --we need to not run this before the if statement.
    end
 end
 
@@ -156,12 +159,15 @@ function Forma:lander(lander)
       for _, p in self.fleet do
          p:control() -- control pilots or clear their orders.
          p:land() -- TODO: make them use the same asset as the leader.
+         p:setSpeedLimit(0)
       end
 
       -- Stop the control loop, or it will override our land() order.
       if self.thook then
          hook.rm(self.thook)
       end
+   else
+      self:dead(lander)
    end
 end
 
@@ -183,6 +189,8 @@ end
 -- Defined on a formation table.
 -- This is where formations will ultimately be defined.
 function Forma:assignCoords()
+   --setup
+
    local posit = {} --position array. I'm using this twice, once for polar coordinates and once for absolute vec2s.
    local numships = #self.fleet -- Readability.
    local offset, x, y, angle, radius, count, flip
@@ -191,6 +199,7 @@ function Forma:assignCoords()
       return {} -- A fleet of 1 ship or less has no business flying in formation.
    end
 
+  --cross formation
   if self.formation == "cross" then
       -- Cross logic. Forms an X.
       angle = math.pi / 4 -- Spokes start rotated at a 45 degree angle.
@@ -201,6 +210,8 @@ function Forma:assignCoords()
          radius = 100 * (math.floor(i / 4) + 1) -- Increase the radius every 4 positions.
       end
       
+      
+   --buffer formation
    elseif self.formation == "buffer" then
       -- Buffer logic. Consecutive arcs eminating from the fleader. Stored as polar coordinates.
       local radii = {Scout = 1000, Fighter = 750, Bomber = 650, Corvette = 500, Destroyer = 400, Cruiser = 300, Carrier = 150} -- Different radii for each class.
@@ -217,6 +228,8 @@ function Forma:assignCoords()
          posit[i] = {angle = angle, radius = radius}
       end
 
+
+   --vee formation
    elseif self.formation == "vee" then
       -- The vee formation forms a v, with the fleader at the apex, and the arms extending in front.
       angle = math.pi / 4 -- Arms start at a 45 degree angle.
@@ -227,6 +240,8 @@ function Forma:assignCoords()
          radius = 100 * (math.floor(i / 2) + 1) -- Increase the radius every 4 positions.
       end
    
+   
+   --wedge formation
    elseif self.formation == "wedge" then
       -- The wedge formation forms a v, with the fleader at the apex, and the arms extending out back.
       flip = -1
@@ -313,6 +328,7 @@ function Forma:control()
    -- Remember, there is no need to check if a pilot exists, because we've already made sure all pilots exist.
    for i, p in ipairs(self.fleet) do
       if not (p == self.fleader) then
+         --print("i: " .. i)
          p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 50)))
          p:control() -- Clear orders.
          p:goto(posit[i], false, false)
