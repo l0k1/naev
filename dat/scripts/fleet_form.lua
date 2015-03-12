@@ -1,3 +1,13 @@
+--[[
+Control fleets, assign formations, have ships stick together.
+Created by Loki and BTAxis
+
+TODO:
+-Finish adding in formations
+-Fix p:setSpeedLimit for ships that aren't the fleader, so it's more stable and reliable.
+-Clean up the notes and comments.
+]]--
+
 -- New approach to the formation object.
 -- First define the base object. There are no default values, I only wrote in the variables for reader reference.
 Forma = {
@@ -262,24 +272,71 @@ function Forma:assignCoords()
       for i = 1, numships do
          posit[i] = {angle = angle, radius = radius} -- Store as polar coordinates.
          angle = angle * -1 -- Flip the arms between -45 and 45 degrees.
-         radius = 100 * (math.floor(i / 2) + 1) -- Increase the radius every 4 positions.
+         radius = 100 * (math.floor(i / 2) + 1) -- Increase the radius every 2 positions.
       end
-   
    
    --wedge formation
    elseif self.formation == "wedge" then
       -- The wedge formation forms a v, with the fleader at the apex, and the arms extending out back.
       flip = -1
-      angle = (flip * (math.pi / 4)) +  math.pi
+      angle = (flip * (math.pi / 4)) + math.pi
       radius = 100 -- First ship distance.
       for i = 1, numships do
          posit[i] = {angle = angle, radius = radius} -- Store as polar coordinates.
          flip = flip * -1
          angle = (flip * (math.pi / 4)) + math.pi-- Flip the arms between 135 and 215 degrees.
-         radius = 100 * (math.floor(i / 2) + 1) -- Increase the radius every 4 positions.
+         radius = 100 * (math.floor(i / 2) + 1) -- Increase the radius every 2 positions.
       end
       
-   --TODO: ECHELON LEFT, ECHELON RIGHT, FISHBONE, CHEVRON, COLUMN, STAGGERED COLUMN, WALL, STAGGERED WALL, SCATTER
+   elseif self.formation == "echelon left" then
+      --This formation forms a "/", with the fleader in the middle.
+      radius = 100
+      flip = -1
+      angle = ((math.pi / 4) * 3) + ((math.pi / 2) * flip)  --Flip between 45 degrees and 225 degrees.
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         flip = flip * -1
+         angle = ((math.pi / 4) * 3) + ((math.pi / 2) * flip)
+         radius = 100 * (math.ceil(i / 2)) -- Increase the radius every 2 positions
+      end
+
+   elseif self.formation == "echelon right" then
+      --This formation forms a "\", with the fleader in the middle.
+      radius = 100
+      flip = 1
+      angle = ((math.pi / 4) * 5) + ((math.pi / 2) * flip) --Flip between 315 degrees, and 135 degrees
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         flip = flip * -1
+         angle = ((math.pi / 4) * 5) + ((math.pi / 2) * flip)
+         radius = 100 * (math.ceil(i / 2))
+      end
+
+   elseif self.formation == "column" then
+      --This formation is a simple "|", with fleader in the middle.
+      radius = 100
+      flip = -1
+      angle = (math.pi / 2) + ((math.pi / 2) * flip)  --flip between 0 degrees and 180 degrees
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         flip = flip * -1
+         angle = (math.pi / 2) + ((math.pi / 2) * flip)
+         radius = 100 * (math.ceil(i/2)) --Increase the radius every 2 ships.
+      end
+
+   elseif self.formation == "wall" then
+      --This formation is a "-", with the fleader in the middle.
+      radius = 100
+      flip = -1
+      angle = math.pi + ((math.pi / 2) * flip) --flip between 90 degrees and 270 degrees
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         flip = flip * -1
+         angle = math.pi + ((math.pi / 2) * flip)
+         radius = 100 * (math.ceil(i/2)) --Increase the radius every 2 ships.
+      end
+
+   --TODO: FISHBONE( | | | ), CHEVRON( < < < ), STAGGERED COLUMN, STAGGERED WALL, SCATTER
       
    else
       -- Default to circle.
