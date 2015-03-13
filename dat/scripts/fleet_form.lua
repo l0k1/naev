@@ -22,8 +22,11 @@ vee               column
 circle            fishbone
 chevron
 
+<<<<<<< HEAD
 TODO:
 -check circle and nil formation.
+=======
+>>>>>>> master
 ]]--
 
 -- First define the base object. There are no default values, I only wrote in the variables for reader reference.
