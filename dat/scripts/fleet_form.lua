@@ -10,7 +10,7 @@ Then pass that to the Forma:new() function.
 Control the fleet's movements by controlling the fleet leader, or "fleader".
 
 example:
-my_fleet = pilot.add("Hyena Pack")
+my_fleet = pilot.add("Pirate Hyena Pack")
 my_fleet = Forma:new(my_fleet,"echelon left",1500)
 my_fleet.fleader:control()
 
