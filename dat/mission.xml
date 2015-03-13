@@ -865,7 +865,7 @@
   <unique />
   </flags>
   <avail>
-   <done>The Patrol</done>
+   <cond>var.peek("heretic_misn_tracker") == 3</cond>
    <chance>100</chance>
    <location>Bar</location>
    <planet>The Wringer</planet>

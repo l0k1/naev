@@ -6,6 +6,7 @@
 	
 
 include "dat/scripts/numstring.lua"
+include "fleet_form.lua"
 	
 lang = naev.lang()
 --beginning messages and choices

@@ -4,6 +4,7 @@
 	the players job is to take out any and all sirius in the system.]]
 
 include "dat/scripts/numstring.lua"
+include "fleet_form.lua"
 
 lang = naev.lang()
 
@@ -126,7 +127,7 @@ function takeoff()
       p:setFriendly(true)
    end
    Forma:new(recon, "wedge")
-   Form:new(attackers, "vee")
+   Forma:new(attackers, "vee")
    hook.pilot(nil,"death","death")
 end
 
