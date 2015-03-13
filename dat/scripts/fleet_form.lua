@@ -2,13 +2,30 @@
 Control fleets, assign formations, have ships stick together.
 Created by Loki and BTAxis
 
+Usage:
+First create a fleet with pilot.add()
+Then pass that to the Forma:new() function.
+-usage is: Forma:new(fleet,"formation",distance from which to break formation and engage enemies)
+-if formation or distance isn't provided, formation will be "circle" and distance will be 3000
+Control the fleet's movements by controlling the fleet leader, or "fleader".
+
+example:
+my_fleet = pilot.add("Hyena Pack")
+my_fleet = Forma:new(my_fleet,"echelon left",1500)
+my_fleet.fleader:control()
+
+Current formations are:
+buffer            echelon left
+cross             echelon right
+wedge             row
+vee               column
+circle            fishbone
+chevron
+
 TODO:
--Finish adding in formations
--Fix p:setSpeedLimit for ships that aren't the fleader, so it's more stable and reliable.
--Clean up the notes and comments.
+-check circle and nil formation.
 ]]--
 
--- New approach to the formation object.
 -- First define the base object. There are no default values, I only wrote in the variables for reader reference.
 Forma = {
          fleet = nil,
@@ -17,6 +34,8 @@ Forma = {
          fleetspeed = nil,
          thook = nil,
          incombat = nil,
+         class_count = nil,
+         combat_dist = nil,
 }
 
 -- The functions below that start with Forma: are all elements of the Forma table above.
@@ -25,15 +44,19 @@ Forma = {
 
 -- Create a new object based on the Forma "class".
 -- Usage: forma = Forma:new(table_of_pilots, "formation_name")
-function Forma:new(fleet, formation)
+function Forma:new(fleet, formation, combat_dist)
    -- Sanity: we want to make sure a fleet was specified. The formation can be nil.
    if not fleet then
       error "Forma must have a fleet."
       return
    end
 
+   if combat_dist == nil then
+      combat_dist = 3000
+   end
+   
    -- Create the object.
-   local forma = {fleet = fleet, formation = formation}
+   local forma = {fleet = fleet, formation = formation, combat_dist = combat_dist}
    setmetatable(forma, self) -- Metatable fanciness.
    self.__index = self -- This means the object will look for its functions in "Forma" if it doesn't have them itself.
 
@@ -45,6 +68,7 @@ function Forma:new(fleet, formation)
       d3 = hook.pilot(p, "land", "lander", forma)
    end
    
+
    forma:reorganize()
    forma:control() -- This is sadly the only time we can do this.
 
@@ -82,8 +106,8 @@ function Forma:reorganize()
    local fleader = nil -- Holds the pilot with the lowest speed.
 
    for _, p in ipairs(self.fleet) do -- We will assume there are no gaps in the table, so we don't need to check if any pilots exist. See dead() for why.
-      pspeed = p:stats().speed_max-- + p:stats().thrust / 3
-      if not minspeed or minspeed > pspeed then -- nil is equivalent to false in Lua.
+      pspeed = p:stats().speed_max
+      if not minspeed or minspeed > pspeed then
          minspeed = pspeed
          fleader = p
       end
@@ -127,15 +151,12 @@ end
 function Forma:shipCount()
    self.class_count = {}
    for i, p in ipairs(self.fleet) do
-      local classy = p:ship():class()
-      if self.class_count[classy] == nil then
-         self.class_count[classy] = 1
+      if self.class_count[p:ship():class()] == nil then
+         self.class_count[p:ship():class()] = 1
       else
-         self.class_count[classy] = self.class_count[classy] + 1
+         self.class_count[p:ship():class()] = self.class_count[p:ship():class()] + 1
       end
    end
-   --for i,p in pairs(self.class_count) do
-   --end
 end
    
 
@@ -193,7 +214,7 @@ function Forma:lander(lander)
          end
       
          p:control() -- control pilots or clear their orders.
-         p:land(closeAsset) -- TODO: make them use the same asset as the leader.
+         p:land(closeAsset)
          p:setSpeedLimit(0)
       end
 
@@ -249,17 +270,17 @@ function Forma:assignCoords()
    --buffer formation
    elseif self.formation == "buffer" then
       -- Buffer logic. Consecutive arcs eminating from the fleader. Stored as polar coordinates.
-      local radii = {Scout = 1000, Fighter = 750, Bomber = 650, Corvette = 500, Destroyer = 400, Cruiser = 300, Carrier = 150} -- Different radii for each class.
+      local radii = {Scout = 1200, Fighter = 900, Bomber = 850, Corvette = 700, Destroyer = 500, Cruiser = 350, Carrier = 250} -- Different radii for each class.
       local count = {Scout = 1, Fighter = 1, Bomber = 1, Corvette = 1, Destroyer = 1, Cruiser = 1, Carrier = 1} -- Need to keep track of positions already iterated through.
       for i, p in ipairs(self.fleet) do
-         classy = p:ship():class() -- For easy reading.
-         if self.class_count[classy] == 1 then -- If there's only one ship in this specific class...
+         ship_class = p:ship():class() -- For readability.
+         if self.class_count[ship_class] == 1 then -- If there's only one ship in this specific class...
             angle = 0 --The angle needs to be zero.
          else -- If there's more than one ship in each class...
-            angle = ((count[classy]-1)*((math.pi/2)/(self.class_count[classy]-1)))-(math.pi/4) -- ..the angle rotates from -45 degrees to 45 degrees, assigning coordinates at even intervals.
-            count[classy] = count[classy] + 1 --Update the count
+            angle = ((count[ship_class]-1)*((math.pi/2)/(self.class_count[ship_class]-1)))-(math.pi/4) -- ..the angle rotates from -45 degrees to 45 degrees, assigning coordinates at even intervals.
+            count[ship_class] = count[ship_class] + 1 --Update the count
          end
-         radius = radii[classy] --Assign the radius, defined above.
+         radius = radii[ship_class] --Assign the radius, defined above.
          posit[i] = {angle = angle, radius = radius}
       end
 
@@ -340,19 +361,19 @@ function Forma:assignCoords()
       radius = 500
       flip = -1
       orig_radius = radius
-      angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      angle = ((math.pi / 8) * flip) / (radius / orig_radius)
       for i = 1, numships do
          posit[i] = {angle = angle, radius = radius}
          if flip == 0 then
             flip = -1
-            radius = (orig_radius * (math.ceil(i/3))) + ((orig_radius * (math.ceil(i/3))) / 10)
+            radius = (orig_radius * (math.ceil(i/3))) + ((orig_radius * (math.ceil(i/3))) / 30)
          elseif flip == -1 then
             flip = 1
          elseif flip == 1 then
             flip = 0
             radius = orig_radius * (math.ceil(i/3))
          end
-         angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+         angle = ((math.pi / 8) * flip) / (radius / orig_radius)
       end
 
 
@@ -360,25 +381,22 @@ function Forma:assignCoords()
       radius = 500
       flip = -1
       orig_radius = radius
-      angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      angle = ((math.pi / 8) * flip) / (radius / orig_radius)
       for i = 1, numships do
          posit[i] = {angle = angle, radius = radius}
          if flip == 0 then
             flip = -1
-            radius = (orig_radius * (math.ceil(i/3))) - ((orig_radius * (math.ceil(i/3))) / 10)
+            radius = (orig_radius * (math.ceil(i/3))) - ((orig_radius * (math.ceil(i/3))) / 20)
          elseif flip == -1 then
             flip = 1
          elseif flip == 1 then
             flip = 0
             radius = orig_radius * (math.ceil(i/3))
          end
-         angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+         angle = ((math.pi / 8) * flip) / (radius / orig_radius)
       end
 
-
-   --TODO: SCATTER
-      
-   else
+   elseif self.formation == "circle" or self.formation == nil then
       -- Default to circle.
       angle = math.pi * 2 / numships -- The angle between each ship, in radians.
       radius = 80 + numships * 25 -- Pulling these numbers out of my ass. The point being that more ships mean a bigger circle.
@@ -402,22 +420,19 @@ function toRepeat (forma)
 end
 
 function Forma:control()
-   local combat_dist = 3000 -- distance at which to begin engaging enemies.
    local inrange = false --Using false instead of nil for readability.
 
    -- A little unconventional, re-set the timer hook at the start of the function. This is because execution might not reach the end.
-   self.thook = hook.timer(30, "toRepeat", self) -- Call the wrapper, not this function.
+   self.thook = hook.timer(100, "toRepeat", self) -- Call the wrapper, not this function.
    
-   ---------------
    --combat. mmmm.
-   ---------------
    local enemies = pilot.get(self.fleader:faction():enemies()) -- Get all enemies of the fleader. NOTE: This assumes an enemy of the fleader is also an enemy of the fleet! For now that's okay, but keep that in mind.
    if self.fleader:hostile() then
       enemies[#enemies+1] = player.pilot() -- Includes the player as an enemy to be iterated over.
    end
 
    for _, enemy in ipairs(enemies) do --Iterate over enemies to see if at least one is in range.
-      if enemy:pos():dist(self.fleader:pos()) < combat_dist then
+      if enemy:pos():dist(self.fleader:pos()) < self.combat_dist then
          inrange = true --The inrange variable was already defaulted to false.
          break --If an enemy is in range, no need to continue looping.
       end
@@ -448,17 +463,19 @@ function Forma:control()
    local posit = self:assignCoords()
 
    -- Remember, there is no need to check if a pilot exists, because we've already made sure all pilots exist.
+   lead_stats = self.fleader:stats()
    for i, p in ipairs(self.fleet) do
       if not (p == self.fleader) then
-         --print("i: " .. i)
-         --p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 51)))
-         p:setSpeedLimit(self.fleetspeed + 8 * (math.log(p:pos():dist(posit[i]))))
+         if p:pos():dist(posit[i]) > 200 then
+            p:setSpeedLimit(0)
+         else
+            p:setSpeedLimit(lead_stats.speed + 7 * (math.log(p:pos():dist(posit[i]))))
+         end
          p:control() -- Clear orders.
          p:goto(posit[i], false, false)
       else
          p:setSpeedLimit(self.fleetspeed) -- Make mon capitan travel at 5 below the slow speed, so other ships can catch up.
-         -- Logic for fleet leader goes here. For now, let's allow the fleader to act according to the regular AI:
-         -- self.fleader:control(false)
+         -- Logic for fleet leader goes here. For now, let's allow the fleader to act according to the regular AI.
       end
    end
 end
