@@ -337,7 +337,7 @@ function Forma:assignCoords()
       end
 
    elseif self.formation == "fishbone" then
-      radius = 200
+      radius = 500
       flip = -1
       orig_radius = radius
       angle = ((math.pi / 4) * flip) / (radius / orig_radius)
@@ -357,7 +357,7 @@ function Forma:assignCoords()
 
 
    elseif self.formation == "chevron" then
-      radius = 200
+      radius = 500
       flip = -1
       orig_radius = radius
       angle = ((math.pi / 4) * flip) / (radius / orig_radius)
@@ -406,7 +406,7 @@ function Forma:control()
    local inrange = false --Using false instead of nil for readability.
 
    -- A little unconventional, re-set the timer hook at the start of the function. This is because execution might not reach the end.
-   self.thook = hook.timer(100, "toRepeat", self) -- Call the wrapper, not this function.
+   self.thook = hook.timer(30, "toRepeat", self) -- Call the wrapper, not this function.
    
    ---------------
    --combat. mmmm.
@@ -451,7 +451,8 @@ function Forma:control()
    for i, p in ipairs(self.fleet) do
       if not (p == self.fleader) then
          --print("i: " .. i)
-         p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 500)))
+         --p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 51)))
+         p:setSpeedLimit(self.fleetspeed + 8 * (math.log(p:pos():dist(posit[i]))))
          p:control() -- Clear orders.
          p:goto(posit[i], false, false)
       else
