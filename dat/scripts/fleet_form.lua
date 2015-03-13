@@ -336,7 +336,47 @@ function Forma:assignCoords()
          radius = 100 * (math.ceil(i/2)) --Increase the radius every 2 ships.
       end
 
-   --TODO: FISHBONE( | | | ), CHEVRON( < < < ), STAGGERED COLUMN, STAGGERED WALL, SCATTER
+   elseif self.formation == "fishbone" then
+      radius = 200
+      flip = -1
+      orig_radius = radius
+      angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         if flip == 0 then
+            flip = -1
+            radius = (orig_radius * (math.ceil(i/3))) + ((orig_radius * (math.ceil(i/3))) / 10)
+         elseif flip == -1 then
+            flip = 1
+         elseif flip == 1 then
+            flip = 0
+            radius = orig_radius * (math.ceil(i/3))
+         end
+         angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      end
+
+
+   elseif self.formation == "chevron" then
+      radius = 200
+      flip = -1
+      orig_radius = radius
+      angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      for i = 1, numships do
+         posit[i] = {angle = angle, radius = radius}
+         if flip == 0 then
+            flip = -1
+            radius = (orig_radius * (math.ceil(i/3))) - ((orig_radius * (math.ceil(i/3))) / 10)
+         elseif flip == -1 then
+            flip = 1
+         elseif flip == 1 then
+            flip = 0
+            radius = orig_radius * (math.ceil(i/3))
+         end
+         angle = ((math.pi / 4) * flip) / (radius / orig_radius)
+      end
+
+
+   --TODO: SCATTER
       
    else
       -- Default to circle.
@@ -411,7 +451,7 @@ function Forma:control()
    for i, p in ipairs(self.fleet) do
       if not (p == self.fleader) then
          --print("i: " .. i)
-         p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 50)))
+         p:setSpeedLimit((self.fleetspeed) + ((p:stats().speed_max - (self.fleetspeed)) * (math.min(50, p:pos():dist(posit[i])) / 500)))
          p:control() -- Clear orders.
          p:goto(posit[i], false, false)
       else
