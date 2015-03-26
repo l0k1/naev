@@ -21,6 +21,7 @@ all the stufs.
    bmsg = {} --beginning messages
    emsg = {} --ending messages
    fmsg = {} --failure messages
+   hqbm = {} --headquarters broadcast messages.
 
    bmsg[1] = [[You walk up to the table %s is at, and once again sit down in the booth across from him. He nods at you in acknowledgement. "Good job so far. Our prototype is almost done, and we have you to thank for that. Now listen, %s is mad. Understandably. And they plan on retaliating. We have solid intelligence that they are on their way here to try and destroy %s. Will you help us?" He pauses, looking at you expectantly.]]
    bmsg[2] = [[%s nods grimly. "Good. We already have ships flying around out there. We are patching in all the friendly ships into the stations radar, so we should see them pretty quick if they jump in. Also, I don't think it needs to be said, but please don't jump or land before this is over. We need your help. Get up there as soon as you can, and good luck. I'll have some credits ready for you when you get back." He waves at you as you leave the booth.]]
@@ -28,8 +29,13 @@ all the stufs.
    fmsg[1] = [[%s grimaces as you tell him no. "Alright, I'm sure you have your reasons. If you change your mind, come back and talk to me. Hopefully there will still be time." He turns away as you get up to go.]] --player said no in the bar
    fmsg[2] = [[As soon as you finish your jump, your comm blares to life, and you recognize the voice of %s. "You jumping out was a stupid move. You left us on our own. We pushed them out, but they may come back. Come talk to me again if you get a chance." The comm falls silent.]] --player jumped early
    fmsg[3] = [[You guide your ship through the atmosphere, hoping to land soon, when your comm comes to life with %s on the other end. "I'm wondering why you thought it was a good idea to desert us. We pushed them out this time, but they may come back. Come talk to me again and we might be able to work something out." The comm falls silent just as you see the docks peek over the horizon.]] --player landed early/wrong
+   fmsg[4] = [[]] --the HQ station blows up.
 
    emsg[1] = [[]]
+
+   hqbm[1] = [[We are detecting high numbers of %s ships entering the system!]]
+   hqbm[2] = [[Our sensors are showing an all clear. Good job, folks.]]
+   hqbm[3] = [[The station is at critical! Reactor melting down! ...]]
 
    osd = {}
    osd[1] = "Patrol the %s system."
@@ -114,8 +120,10 @@ function takingoff()
    numFriendlyCaps = rnd.rnd(2,5)
    if friendlyFaction:name() == "Goddard" then
       friendlyCaps = "Goddard Goddard"
+      enemyCaps = "Krain Kestrel"
    else
       friendlyCaps = "Krain Kestrel"
+      enemyCaps = "Goddard Goddard"
    end
    for i = 1, numFriendlyCaps do
       rndX = rnd.rnd(-10000,10000)
@@ -151,11 +159,60 @@ end
 
 function enemyFleetArrival()
    --now the fun begins!
+   missionStatus(2)
+   misn.osdActive(missionStatus)
 
+   hqBroadcast = hqBroadcast:format(enemyFaction:name())
+   theHQ[1]:broadcast(hqBroadcast)
+
+   sysJumps = combatSys:jumps()
+   combatJump = sysJumps[1]:dest()
+
+   enemyFleet = {}
+   numEnemyFighters = rnd.rnd(21,30)
+   for i = 1, numEnemyFighters do
+      newEF = pilot.add(enemyFaction:name() .. " Lancelot",nil,combatJump)
+      newEF[1]:setVisible()
+      newEF[1]:setHostile()
+      newEF[1]:setNoLand()
+      newEF[1]:setNoJump()
+      hook.pilot(newEF[1],"exploded","enemyDead")
+      table.insert(enemyFleet,newEF[1])
+   end
+   
+   numEnemyCaps = rnd.rnd(3,7)
+   for i = 1, numEnemyCaps do
+      newEC = pilot.add(enemyCaps,nil,combatJump)
+      newEC[1]:setVisible()
+      newEC[1]:setHostile()
+      newEC[1]:setNoLand()
+      newEC[1]:setNoJump()
+      hook.pilot(newEC[1],"exploded","enemyDead")
+      table.insert(enemyFleet,newEC[1])
+   end
 end
 
 function hqDead()
    --dangit, the hq is ded!
+   --mission finishes, no reward, station is gone forevers!
+   --when it's done, apply the unidiff that allows enemyFaction's ship to be put on sale.
+   tk.msg(misn_title,fmsg[4])
+   mission.finish(true)
+end
+
+function enemyDead()
+   --see if the enemy fleet has been defeated.
+   numEnemyDead = numEnemyDead or 0
+   if numEnemyDead = #enemyFleet then
+      theHQ[1]:broadcast(hqbm[2])
+      missionStatus = 3
+      if friendlyFaction:name() == "Goddard" then
+         diff.remove("Corporate War Manuel Station")
+      else
+         diff.remove("Corporate War Krain Station")
+      end
+      theHQ[1]:rm()
+   end
 end
 
 function jumper()
