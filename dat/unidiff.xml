@@ -57,6 +57,16 @@
    <asset name="Sindbad">add</asset>
   </system>
  </unidiff>
+ <unidiff name="Corporate War Manuel Station">
+  <system name="Goddard">
+   <asset name="Manuel Station">remove</asset>
+  </system>
+ </unidiff>
+ <unidiff name="Corporate War Krain Station">
+  <system name="Salvador">
+   <asset name="Krain Station">remove</asset>
+  </system>
+ </unidiff>
  <unidiff name="test">
   <system name="Hakoi">
    <jump target="Gamma Polaris" x="10" y="10" hide="0">add</jump>

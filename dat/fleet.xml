@@ -950,4 +950,18 @@
    <pilot name="Drone Lancelot" ship="Lancelot"></pilot>
   </pilots>
  </fleet>
+ <fleet name="Manuel Station">
+  <ai>base</ai>
+  <faction>Goddard</faction>
+  <pilots>
+   <pilot name="Manuel Station" ship="Shipyard"></pilot>
+  </pilots>
+ </fleet>
+ <fleet name="Krain Station">
+  <ai>base</ai>
+  <faction>Krain</faction>
+  <pilots>
+   <pilot name="Krain Station" ship="Shipyard"></pilot>
+  </pilots>
+ </fleet>
 </Fleets>
