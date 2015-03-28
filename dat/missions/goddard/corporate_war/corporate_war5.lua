@@ -111,10 +111,9 @@ function jumper()
       missionStatus = 2
       misn.osdActive(missionStatus)
       --turn off pirates and other baddies and remove ships already in the system. we want total control!
-      pilot.toggleSpawn("Pirate")
-      pilot.toggleSpawn("Krain")
-      pilot.toggleSpawn("Empire")
-      pilot.toggleSpawn("Goddard")
+      --turning off everyone, as dvaered sometimes attacked goddard?
+      pilot.toggleSpawn(false)
+
       for _,p in ipairs(pilot.get()) do
          if p ~= pilot.player() then
             p:rm()

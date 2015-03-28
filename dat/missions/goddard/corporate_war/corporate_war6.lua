@@ -229,7 +229,7 @@ function lander()
       tk.msg(misn_title,fmsg[3])
       misn.finish(false)
    elseif missionStatus == 3 and planet.cur() == combatAsset then
-      emsg[1] = emsg[1]:format(***BLERG***) --still need to write emsgs
+      emsg[1] = emsg[1]:format() --still need to write emsgs
       tk.msg(misn_title,emsg[1])
       player.pay(misn_reward)
       faction.modPlayerRaw("Empire",empireStanding - faction.get("Empire"):playerStanding())
