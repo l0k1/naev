@@ -43,8 +43,9 @@ all the stufs.
    osd[3] = "Return to %s."
 
 
-   newsArticle = { title = [[%s releases new ship.]]
-                   description = [[%s has just recently announced the launch of a new line of ships, based on their prior successful capital ships. "The MkII is smaller, sleeker, and filled to the brim with next-gen military grade technology." Stated a press release issued earlier today. %s stocks have already increased by 2.7 points, and are expected to continue to climb.]]
+   newsArticle = { title = [[%s releases new ship.]],
+                   description = [[%s has just recently announced the launch of a new line of ships, based on their prior successful capital ships. "The MkII is smaller, sleeker, and filled to the brim with next-gen military grade technology." Stated a press release issued earlier today. %s stocks have already increased by 2.7 points, and are expected to continue to climb.]],
+                 }
 
 
 function create ()
@@ -246,7 +247,12 @@ function lander()
       newsarticle.title = newsarticle.title:format(friendlyFaction:name())
       newsarticle.description = newsarticle.description:format(friendlyFaction:name(),friendlyFaction:name())
       news.add("Generic",newsarticle.title,newsarticle.description)
-      --need to come up with and apply the tech unidiff adding the new ship.
+      
+      --campaign is over, so pop the variables.
+      var.pop("corpWarFaction")
+      var.pop("corpWarEnemy")
+      var.pop("corpWarStolen")
+
       misn.finish(true)
    end
 end
