@@ -42,6 +42,11 @@ all the stufs.
    osd[2] = "Defend %s from the incoming assault."
    osd[3] = "Return to %s."
 
+
+   newsArticle = { title = [[%s releases new ship.]]
+                   description = [[%s has just recently announced the launch of a new line of ships, based on their prior successful capital ships. "The MkII is smaller, sleeker, and filled to the brim with next-gen military grade technology." Stated a press release issued earlier today. %s stocks have already increased by 2.7 points, and are expected to continue to climb.]]
+
+
 function create ()
 
    friendlyFaction = faction.get(var.peek("corpWarFaction"))
@@ -203,7 +208,7 @@ end
 function enemyDead()
    --see if the enemy fleet has been defeated.
    numEnemyDead = numEnemyDead or 0
-   if numEnemyDead = #enemyFleet then
+   if numEnemyDead == #enemyFleet then
       theHQ[1]:broadcast(hqbm[2])
       missionStatus = 3
       if friendlyFaction:name() == "Goddard" then
@@ -233,6 +238,14 @@ function lander()
       tk.msg(misn_title,emsg[1])
       player.pay(misn_reward)
       faction.modPlayerRaw("Empire",empireStanding - faction.get("Empire"):playerStanding())
+      if friendlyFaction:name() == "Goddard" then
+         diff.apply("Add Goddard MkII")
+      else
+         diff.apply("Add Kestrel MkII")
+      end
+      newsarticle.title = newsarticle.title:format(friendlyFaction:name())
+      newsarticle.description = newsarticle.description:format(friendlyFaction:name(),friendlyFaction:name())
+      news.add("Generic",newsarticle.title,newsarticle.description)
       --need to come up with and apply the tech unidiff adding the new ship.
       misn.finish(true)
    end

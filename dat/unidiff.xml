@@ -75,4 +75,14 @@
    <jump target="Hakoi" type="exitonly">add</jump>
   </system>
  </unidiff>
+ <unidiff name="Add Goddard MkII">
+  <tech name="Goddard Ship">
+   <add>__Goddard MkII</add>
+  </tech>
+ </unidiff>
+ <unidiff name="Add Kestrel MkII">
+  <tech name="Krain Industries">
+   <add>__Krain MkII</add>
+  </tech>
+ </unidiff>
 </unidiffs>

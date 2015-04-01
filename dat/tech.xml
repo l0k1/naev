@@ -900,4 +900,10 @@
  <tech name="New Haven Maps">
   <item>Map: New Haven's hidden jump points</item>
  </tech>
+ <tech name="__Goddard MkII">
+  <item>Goddard MkII</item>
+ </tech>
+ <tech name="__Kestrel MkII">
+  <item>Kestrel MkII</item>
+ </tech>
 </Techs>

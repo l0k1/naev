@@ -970,4 +970,16 @@
    <done>Flying a New Bird</done>
   </avail>
  </mission>
+ <mission name = "Corporate End Game">
+  <lua>goddard/corporate_war/corporate_war6</lua>
+  <flags>
+   <unique />
+  </flags>
+  <avail>
+   <chance>100</chance>
+   <location>Bar</location>
+   <cond>planet.cur():name() == var.peek("corpWarHQ") and var.peek("corpWarStolen") ~= 1</cond>
+   <done>Corporate Revenge</done>
+  </avail>
+ </mission>
 </Missions>
