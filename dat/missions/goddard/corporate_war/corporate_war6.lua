@@ -29,9 +29,11 @@ all the stufs.
    fmsg[1] = [[%s grimaces as you tell him no. "Alright, I'm sure you have your reasons. If you change your mind, come back and talk to me. Hopefully there will still be time." He turns away as you get up to go.]] --player said no in the bar
    fmsg[2] = [[As soon as you finish your jump, your comm blares to life, and you recognize the voice of %s. "You jumping out was a stupid move. You left us on our own. We pushed them out, but they may come back. Come talk to me again if you get a chance." The comm falls silent.]] --player jumped early
    fmsg[3] = [[You guide your ship through the atmosphere, hoping to land soon, when your comm comes to life with %s on the other end. "I'm wondering why you thought it was a good idea to desert us. We pushed them out this time, but they may come back. Come talk to me again and we might be able to work something out." The comm falls silent just as you see the docks peek over the horizon.]] --player landed early/wrong
-   fmsg[4] = [[]] --the HQ station blows up.
+   fmsg[4] = [[Your comms start firing off static intermixed with short,desperate messages. You nav display shows a live view of the station, fire erupting from it as its reactor begins to melt down. You watch, in horror, as escape pods frantically try to clear the blast radius, but for naught, as the explosions finally commence and rip the station apart. You have failed, and the station is no more.]] --the HQ station blows up.
 
-   emsg[1] = [[]]
+   emsg[1] = [[Having safely defended %s from being destroyed, you land on the station to see people rushing around and checking systems. %s greets you as you disembark, all smiles. "That was rather exhilirating! Great job, %s." %s pats you on the back. "We have some important news to share. If you'd be so kind as to follow me?" You nod, and %s leads you off the docks and down a corridor. Before long, you are lead into an open room, with many anxious reporters standing around. %s guestures for you to sit.]]
+   emsg[2] = [[A man dressed in a slick suit steps up to a podium in the front of the room, and everyone quickly falls silent. "Thank you all for being here. We were unaware that %s was going to attack us today, but that only sheds some light on our competition and their ethis." He adjusts his tie as you roll your eyes. "This station was defended in no small part by %s, who has honoured us with his presence today." With this, the man guestures at you as the reporters applaud politely. "The real reason we have asked you hear today, is that we are launching a new line of ships. Available starting today, these new ships are smaller and are capable of fighting with the best of them. They have the latest military-grade technology, and we are confident these ships will have a long-term impact on the galaxy." The reporters again clap, as a picture of the new ship is displayed against the wall behind the man. Impressive.]]
+   emsg[3] = [[As the meeting ends, %s shakes your hand. "It's been a pleasure working with you, %s. You've been a great asset to this company, and to the development of that ship. If you're ever in the system again, drop by for some drinks!" And with that, %s walks away, leaving you with a feeling of accomplishment.]]
 
    hqbm[1] = [[We are detecting high numbers of %s ships entering the system!]]
    hqbm[2] = [[Our sensors are showing an all clear. Good job, folks.]]
@@ -203,6 +205,12 @@ function hqDead()
    --mission finishes, no reward, station is gone forevers!
    --when it's done, apply the unidiff that allows enemyFaction's ship to be put on sale.
    tk.msg(misn_title,fmsg[4])
+   diff.apply("Add " .. enemyFaction:name() .. " MkII")
+
+   newsarticle.title = newsarticle.title:format(enemyFaction:name())
+   newsarticle.description = newsarticle.description:format(enemyFaction:name(),enemyFaction:name())
+   news.add("Generic",newsarticle.title,newsarticle.description)
+
    mission.finish(true)
 end
 
@@ -235,7 +243,11 @@ function lander()
       tk.msg(misn_title,fmsg[3])
       misn.finish(false)
    elseif missionStatus == 3 and planet.cur() == combatAsset then
-      emsg[1] = emsg[1]:format() --still need to write emsgs
+
+      emsg[1] = emsg[1]:format(planet.cur(),handlerName,player.name(),handlerName,handlerName,handlerName)
+      emsg[2] = emsg[2]:format(enemyFaction:name(),player.name())
+      emsg[3] = emsg[3]:format(handlerName,player.name(),handlerName)
+   
       tk.msg(misn_title,emsg[1])
       player.pay(misn_reward)
       faction.modPlayerRaw("Empire",empireStanding - faction.get("Empire"):playerStanding())
@@ -244,6 +256,7 @@ function lander()
       else
          diff.apply("Add Kestrel MkII")
       end
+
       newsarticle.title = newsarticle.title:format(friendlyFaction:name())
       newsarticle.description = newsarticle.description:format(friendlyFaction:name(),friendlyFaction:name())
       news.add("Generic",newsarticle.title,newsarticle.description)
