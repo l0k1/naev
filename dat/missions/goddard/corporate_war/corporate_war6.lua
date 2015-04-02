@@ -146,13 +146,14 @@ function takingoff()
    --we need to make the station into a ship too, so it can get destroyed.
    basePos = combatAsset:pos()
    if friendlyFaction:name() == "Goddard" then
-      diff.apply("Corporate War Manuel Station")
       theHQ = pilot.add("Manuel Station",nil,basePos)
+      diff.apply("Corporate War Manuel Station")
    else
-      diff.apply("Corporate War Krain Station")
       theHQ = pilot.add("Krain Station",nil,basePos)
+      diff.apply("Corporate War Krain Station")
    end
    theHQ[1]:setVisible()
+   theHQ[1]:setHilight()
    theHQ[1]:setFriendly()
    theHQ[1]:control()
    theHQ[1]:brake()
@@ -167,7 +168,7 @@ end
 
 function enemyFleetArrival()
    --now the fun begins!
-   missionStatus(2)
+   missionStatus = 2
    misn.osdActive(missionStatus)
 
    hqBroadcast = hqBroadcast:format(enemyFaction:name())
