@@ -12,6 +12,10 @@ all the stufs.
 
 --]]
 
+include "dat/scripts/fleet_form.lua"
+
+
+
    bar_name = "%s"
    bar_desc = "%s sits at a booth, rapping his fingers on the table."
 
@@ -36,8 +40,9 @@ all the stufs.
    emsg[3] = [[As the meeting ends, %s shakes your hand. "It's been a pleasure working with you, %s. You've been a great asset to this company, and to the development of that ship. If you're ever in the system again, drop by for some drinks!" And with that, %s walks away, leaving you with a feeling of accomplishment.]]
 
    hqbm[1] = [[We are detecting high numbers of %s ships entering the system!]]
-   hqbm[2] = [[Our sensors are showing an all clear. Good job, folks.]]
-   hqbm[3] = [[The station is at critical! Reactor melting down! ...]]
+   hqbm[2] = [[Sensors are showing more enemy ships entering the system! Deploying reserve fleet!]]
+   hqbm[3] = [[Our sensors are showing an all clear. Good job, folks.]]
+   hqbm[4] = [[The station is at critical! Reactor melting down! ...]]
 
    osd = {}
    osd[1] = "Patrol the %s system."
@@ -114,15 +119,27 @@ end
 function takingoff()
    --we actually don't care about the patrolling. just have a random timer for when "enemyfleet" jumps in.
    --add in friendly ships, etc. don't really care about where, as there's no fleets.
+   
+   --set up the system.
+   --so empire doesn't get involved.
+   pilot.clear()
+   pilot.toggleSpawn(false) 
+   
+
+   --set up friendly fleet.
+   
+   friendlyFleet = {}
+
+   ffLoc = vec2.new(rnd.rnd(-5000,5000),rnd.rnd(-5000,5000))
+
    numFriendlyFighters = rnd.rnd(18,25)
    for i = 1, numFriendlyFighters do
-      rndX = rnd.rnd(-10000,10000)
-      rndY = rnd.rnd(-10000,10000)
-      newFF = pilot.add(friendlyFaction:name() .. " Lancelot",nil,vec2.new(rndX,rndY))
+      newFF = pilot.add(friendlyFaction:name() .. " Lancelot",nil,ffLoc)
       newFF[1]:setVisible()
       newFF[1]:setFriendly()
       newFF[1]:setNoLand()
       newFF[1]:setNoJump()
+      table.insert(friendlyFleet,newFF[1])
    end
 
    numFriendlyCaps = rnd.rnd(2,5)
@@ -131,17 +148,19 @@ function takingoff()
       enemyCaps = "Krain Kestrel"
    else
       friendlyCaps = "Krain Kestrel"
+      numFriendlyCaps = numFriendlyCaps + 3 --allowing more kestrels because the goddards are way more powerful.
       enemyCaps = "Goddard Goddard"
    end
    for i = 1, numFriendlyCaps do
-      rndX = rnd.rnd(-10000,10000)
-      rndY = rnd.rnd(-10000,10000)
-      newFC = pilot.add(friendlyCaps,nil,vec2.new(rndX,rndY))
-      newFF[1]:setVisible()
-      newFF[1]:setFriendly()
-      newFF[1]:setNoLand()
-      newFF[1]:setNoJump()
+      newFC = pilot.add(friendlyCaps,nil,ffLoc)
+      newFC[1]:setVisible()
+      newFC[1]:setFriendly()
+      newFC[1]:setNoLand()
+      newFC[1]:setNoJump()
+      table.insert(friendlyFleet,newFC[1])
    end
+
+   friendlyForma = Forma:new(friendlyFleet,"cross",3500)
    
    --we need to make the station into a ship too, so it can get destroyed.
    basePos = combatAsset:pos()
@@ -164,7 +183,7 @@ function takingoff()
 
 
    --now that that's all done, hook the enemy fleet jumping in.
-   rndTimer = rnd.rnd(10000,60000) --random timer between 10 seconds and 1 minute.
+   rndTimer = rnd.rnd(20000,90000) --random timer between 10 seconds and 1 minute.
    hook.timer(rndTimer,"enemyFleetArrival")
 end
 
@@ -173,8 +192,8 @@ function enemyFleetArrival()
    missionStatus = 2
    misn.osdActive(missionStatus)
 
-   hqBroadcast = hqBroadcast:format(enemyFaction:name())
-   theHQ[1]:broadcast(hqBroadcast)
+   hqbm[1] = hqbm[1]:format(enemyFaction:name())
+   theHQ[1]:broadcast(hqbm[1])
 
    sysJumps = combatSys:jumps()
    combatJump = sysJumps[1]:dest()
@@ -201,6 +220,43 @@ function enemyFleetArrival()
       hook.pilot(newEC[1],"exploded","enemyDead")
       table.insert(enemyFleet,newEC[1])
    end
+
+   enemyForma = Forma:new(enemyFleet,"vee",3500)
+   
+   rndTimer = rnd.rnd(20000,90000)
+   hook.timer(rndTimer,"moreEnemies")
+end
+
+function moreEnemis()
+   theHQ[1]:broadcast(hqbm[2])
+   missionStatus = 3
+   --todo add more enemies and friendlies.
+   
+   --doing all the rnd's first for easier viewing/balancing.
+   numNewFF = rnd.rnd(9,13) --friendly fighters
+   numNewFC = rnd.rnd(1,3) --friendly caps
+   numNewEF = rnd.rnd(11,16) --enemy fighters
+   numNewEC = rnd.rnd(1,3) --enemy caps.
+   
+   --set up tables
+   newFriendlyFleet = {}
+   newEnemyFleet = {}
+
+   --starting pos
+   ffLoc = theHQ[1]:pos()
+   
+   if sysJumps[2] then
+      efJump = sysJumps[2]:dest()
+   else
+      efJump = combatJump
+   end
+
+   --populate ships.
+   
+   for i = 1, numNewFF do
+      pilot.add(friendlyFaction:name() .. " Lancelot",nil,ffLoc)
+   end --need to finish this part.
+
 end
 
 function hqDead()
@@ -219,10 +275,10 @@ end
 
 function enemyDead()
    --see if the enemy fleet has been defeated.
-   numEnemyDead = numEnemyDead or 0
-   if numEnemyDead == #enemyFleet then
-      theHQ[1]:broadcast(hqbm[2])
-      missionStatus = 3
+   if #enemyFleet == 0 and theHQ[1]:exists() and missionStatus == 3 then
+      theHQ[1]:broadcast(hqbm[3])
+      missionStatus = 4
+      misn.osdUpdate(3)
       if friendlyFaction:name() == "Goddard" then
          diff.remove("Corporate War Manuel Station")
       else
