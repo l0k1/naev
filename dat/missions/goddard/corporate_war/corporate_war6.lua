@@ -233,11 +233,12 @@ function moreEnemis()
    --todo add more enemies and friendlies.
    
    --doing all the rnd's first for easier viewing/balancing.
+   --we want bias to be in favor of the enemy.
    numNewFF = rnd.rnd(9,13) --friendly fighters
    numNewFC = rnd.rnd(1,3) --friendly caps
-   numNewEF = rnd.rnd(11,16) --enemy fighters
-   numNewEC = rnd.rnd(1,3) --enemy caps.
-   
+   numNewEF = rnd.rnd(12,16) --enemy fighters
+   numNewEC = rnd.rnd(2,4) --enemy caps.
+  
    --set up tables
    newFriendlyFleet = {}
    newEnemyFleet = {}
@@ -254,8 +255,46 @@ function moreEnemis()
    --populate ships.
    
    for i = 1, numNewFF do
-      pilot.add(friendlyFaction:name() .. " Lancelot",nil,ffLoc)
-   end --need to finish this part.
+      newFF = pilot.add(friendlyFaction:name() .. " Lancelot",nil,ffLoc)
+      newFF[1]:setVisible()
+      newFF[1]:setFriendly()
+      newFF[1]:setNoLand()
+      newFF[1]:setNoJump()
+      table.insert(newFriendlyFleet,newFF[1])
+   end
+
+   for i = 1, numNewFC do
+      newFC = pilot.add(friendlyCaps,nil,ffLoc)
+      newFC[1]:setVisible()
+      newFC[1]:setFriendly()
+      newFC[1]:setNoLand()
+      newFC[1]:setNoJump()
+      table.insert(newFriendlyFleet,newFC[1])
+   end
+
+   for i = 1, numNewEF do
+      newEF = pilot.add(enemyFaction:name() .. " Lancelot",nil,efJump)
+      newEF[1]:setVisible()
+      newEF[1]:setHostile()
+      newEF[1]:setNoLand()
+      newEF[1]:setNoJump()
+      hook.pilot(newEF[1],"exploded","enemyDead")
+      table.insert(newEnemyFleet,newEF[1])
+   end
+
+   for i = 1, numNewEC do
+      newEC = pilot.add(enemyCaps,nil,efJump)
+      newEC[1]:setVisible()
+      newEC[1]:setHostile()
+      newEC[1]:setNoLand()
+      newEC[1]:setNoJump()
+      hook.pilot(newEC[1],"exploded","enemyDead")
+      table.insert(newEnemyFleet,newEC[1])
+   end
+
+   --create the formas.
+   newFriendlyForma = Forma:new(newFriendlyFleet,"wedge",2500)
+   newEnemyForma = Forma:new(newEnemyFleet,"buffer")
 
 end
 
@@ -275,7 +314,8 @@ end
 
 function enemyDead()
    --see if the enemy fleet has been defeated.
-   if #enemyFleet == 0 and theHQ[1]:exists() and missionStatus == 3 then
+   newEnemyFleet = newEnemyFleet or {} --just to prevent errors if the new enemy fleet hasn't jumped in yet.
+   if #enemyFleet == 0 and #newEnemyFleet == 0 and theHQ[1]:exists() and missionStatus == 3 then
       theHQ[1]:broadcast(hqbm[3])
       missionStatus = 4
       misn.osdUpdate(3)
