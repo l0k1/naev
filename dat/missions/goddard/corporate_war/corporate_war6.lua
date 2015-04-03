@@ -152,6 +152,8 @@ function takingoff()
       theHQ = pilot.add("Krain Station",nil,basePos)
       diff.apply("Corporate War Krain Station")
    end
+   theHQ[1]:control()
+   theHQ[1]:brake()
    theHQ[1]:setVisible()
    theHQ[1]:setHilight()
    theHQ[1]:setFriendly()
