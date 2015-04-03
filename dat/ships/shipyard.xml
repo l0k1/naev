@@ -34,8 +34,8 @@
   <utility size="large"/>
   <utility size="large"/>
   <utility size="large"/>
-  <structure size="large" prop="engines" exlusive="1" required="1">Beat Up Large Engine</utility>
-  <structure size="large" prop="hull" exclusive="1" required="1">S&amp;K Superheavy Combat Plating</utility>
+  <structure size="large" prop="engines" exlusive="1" required="1">Beat Up Large Engine</structure>
+  <structure size="large" prop="hull" exclusive="1" required="1">S&amp;K Superheavy Combat Plating</structure> 
   <structure size="large"/>
   <structure size="large"/>
   <structure size="large"/>
