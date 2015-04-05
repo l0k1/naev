@@ -132,7 +132,7 @@ function takingoff()
 
    ffLoc = vec2.new(rnd.rnd(-5000,5000),rnd.rnd(-5000,5000))
 
-   numFriendlyFighters = rnd.rnd(18,25)
+   numFriendlyFighters = rnd.rnd(28,35)
    for i = 1, numFriendlyFighters do
       newFF = pilot.add(friendlyFaction:name() .. " Lancelot",nil,ffLoc)
       newFF[1]:setVisible()
@@ -199,7 +199,7 @@ function enemyFleetArrival()
    combatJump = sysJumps[1]:dest()
 
    enemyFleet = {}
-   numEnemyFighters = rnd.rnd(21,30)
+   numEnemyFighters = rnd.rnd(31,40)
    for i = 1, numEnemyFighters do
       newEF = pilot.add(enemyFaction:name() .. " Lancelot",nil,combatJump)
       newEF[1]:setVisible()
@@ -210,7 +210,7 @@ function enemyFleetArrival()
       table.insert(enemyFleet,newEF[1])
    end
    
-   numEnemyCaps = rnd.rnd(3,7)
+   numEnemyCaps = rnd.rnd(3,5)
    for i = 1, numEnemyCaps do
       newEC = pilot.add(enemyCaps,nil,combatJump)
       newEC[1]:setVisible()
@@ -223,21 +223,21 @@ function enemyFleetArrival()
 
    enemyForma = Forma:new(enemyFleet,"vee",3500)
    
-   rndTimer = rnd.rnd(20000,90000)
+   rndTimer = rnd.rnd(50000,200000)
    hook.timer(rndTimer,"moreEnemies")
 end
 
-function moreEnemis()
+function moreEnemies()
    theHQ[1]:broadcast(hqbm[2])
    missionStatus = 3
    --todo add more enemies and friendlies.
    
    --doing all the rnd's first for easier viewing/balancing.
    --we want bias to be in favor of the enemy.
-   numNewFF = rnd.rnd(9,13) --friendly fighters
+   numNewFF = rnd.rnd(19,23) --friendly fighters
    numNewFC = rnd.rnd(1,3) --friendly caps
-   numNewEF = rnd.rnd(12,16) --enemy fighters
-   numNewEC = rnd.rnd(2,4) --enemy caps.
+   numNewEF = rnd.rnd(22,26) --enemy fighters
+   numNewEC = rnd.rnd(2,3) --enemy caps.
   
    --set up tables
    newFriendlyFleet = {}
@@ -318,7 +318,7 @@ function enemyDead()
    if #enemyFleet == 0 and #newEnemyFleet == 0 and theHQ[1]:exists() and missionStatus == 3 then
       theHQ[1]:broadcast(hqbm[3])
       missionStatus = 4
-      misn.osdUpdate(3)
+      misn.osdActive(3)
       if friendlyFaction:name() == "Goddard" then
          diff.remove("Corporate War Manuel Station")
       else
